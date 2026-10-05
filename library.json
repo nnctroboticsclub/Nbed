@@ -1,0 +1,23 @@
+{
+  "name": "Nbed",
+  "version": "0.1.0",
+  "description": "A beginner-friendly STM32 HAL wrapper for NUCLEO-F446RE.",
+  "keywords": [
+    "stm32",
+    "stm32f4",
+    "nucleo-f446re",
+    "hal"
+  ],
+  "frameworks": [
+    "stm32cube"
+  ],
+  "platforms": [
+    "ststm32"
+  ],
+  "dependencies": {
+    "logger": "https://github.com/nnctroboticsclub/logger/archive/refs/tags/v0.3.0.zip"
+  },
+  "build": {
+    "extraScript": "extra_script.py"
+  }
+}
