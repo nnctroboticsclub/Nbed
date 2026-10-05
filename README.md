@@ -5,14 +5,8 @@ Nbed は、**NUCLEO-F446RE（STM32F446RET6）** で GPIO、ADC、PWM、I²C、UA
 タイマ・通信機能・ピンをコードに明示して、間違った組み合わせは `Initialize()` の失敗として
 検出します。
 
-初心者はまず `#include "nbed.h"` と `System::Initialize()` だけ覚えれば大丈夫です。
-実際にビルドできる一通りの例は
-[`src/06-f4-nbed-example/src/main.cc`](../../src/06-f4-nbed-example/src/main.cc) にあります。
-
-> [!IMPORTANT]
-> この版は NUCLEO-F446RE 専用です。STM32 の端子は **3.3 V 系**です。5 V を直接入力
-> してはいけません。モータ、サーボ、CAN 機器などの電源と NUCLEO の **GND は必ず共通化**
-> してください。
+初心者はまず `#include "nbed.h"` と `System::Initialize()` だけ覚えれば大丈夫です。  
+こちらの [サンプル](最初に動かす) にチュートリアルとしてLチカの例があります。
 
 ## 目次
 
@@ -63,24 +57,24 @@ Nbed は、**NUCLEO-F446RE（STM32F446RET6）** で GPIO、ADC、PWM、I²C、UA
 - ST-LINK 用 USB ケーブル
 - PlatformIO が使える環境（VS Code + PlatformIO IDE など）
 
-最初は基板上の LED（`PA5`）を点滅させるだけの、次のプログラムがおすすめです。
+最初はNucleo基板上の LED（`PA5`）を点滅させるだけの、次のプログラムがおすすめです。
 
 ```cpp
 #include "nbed.h"
 
 int main() {
-  System::Initialize();
+  System::Initialize(); // クロック等の初期化
 
-  DigitalOut led{kPA5};
-  if (!led.Initialize()) {
-    System::ErrorHandler();
-  }
+  DigitalOut led(kPA5); // LEDを定義
+
+  led.Initialize();     // LEDを初期化
 
   while (true) {
-    led = true;
-    SleepFor(500ms);
-    led = false;
-    SleepFor(500ms);
+    led = true;       // 点灯 (led.Write(true) とも書ける)
+    SleepFor(500ms);  // 500ms 待つ
+  
+    led = false;      // 消灯 (led.Write(false) とも書ける)
+    SleepFor(500ms);  // 500ms 待つ
   }
 }
 ```
@@ -88,11 +82,12 @@ int main() {
 `System::Initialize()` は、HAL、クロック、時間計測、DMA を初期化します。`main()` の先頭で
 **一度だけ**呼び出してください。`SleepFor()` の `ms` と `s` は、それぞれミリ秒・秒を表します。
 
-`Initialize()` が `false` なら、選んだピンや周辺機能の組み合わせが使えない、同じ資源を
+`Initialize()` は、初期化に失敗した場合に `false` を返します。  
+`false` なら、選んだピンや周辺機能の組み合わせが使えない、同じ資源を
 すでに使っている、または設定値が不正です。最初のうちは戻り値を必ず確認しましょう。
 
 ```cpp
-DigitalOut output{kPA5};
+DigitalOut output(kPA5);
 if (!output.Initialize()) {
   System::ErrorHandler();  // 割り込みを止めて停止する既定のエラー処理
 }
@@ -131,10 +126,9 @@ NUCLEO-F446RE のユーザー LED LD2 は `PA5` です。`true` は High、`fals
 この基板では High で LED が点灯します。
 
 ```cpp
-DigitalOut led{kPA5};
-if (!led.Initialize()) {
-  System::ErrorHandler();
-}
+DigitalOut led(kPA5);
+
+led.Initialize();
 
 led.Write(true);   // 点灯
 led.Write(false);  // 消灯
@@ -142,7 +136,7 @@ led = true;        // Write(true) と同じ
 ```
 
 コンストラクタの 2 番目の引数は、初期化した直後の出力値です。たとえば
-`DigitalOut motor_enable{kPB0, false};` とすれば、初期化時に Low を出力します。
+`DigitalOut motor_enable(kPB0, false);` とすれば、初期化時に Low を出力します。
 
 ### 入力: スイッチを読む
 
@@ -151,10 +145,9 @@ High になる接続か Low になる接続かを回路図で確認してくだ�
 接続されています。
 
 ```cpp
-DigitalIn button{kPC13, GpioPull::kNone};
-if (!button.Initialize()) {
-  System::ErrorHandler();
-}
+DigitalIn button(kPC13, GpioPull::kNone);
+
+button.Initialize();
 
 if (button.Read()) {
   // High のときに実行する処理
@@ -165,7 +158,7 @@ if (button.Read()) {
 `GpioPull::kDown` を選び、押していない時の電圧を決めます。
 
 ```cpp
-DigitalIn switch_input{kPB1, GpioPull::kUp};
+DigitalIn switch_input(kPB1, GpioPull::kUp);
 // スイッチで PB1 を GND へつなぐ回路なら、押した時は false（Low）
 ```
 
@@ -181,10 +174,9 @@ led = button;  // button の現在の値を LED へ出力
 `ReadVoltage()` は指定した基準電圧から求めた電圧を返します。
 
 ```cpp
-AnalogIn battery{kPA0};  // 基準電圧は既定で 3.3 V
-if (!battery.Initialize()) {
-  System::ErrorHandler();
-}
+AnalogIn battery(kPA0);  // 基準電圧は既定で 3.3 V
+
+battery.Initialize();
 
 const float ratio = battery.ReadRatio();      // 例: 0.50
 const float voltage = battery.ReadVoltage();  // 例: 約 1.65 V
@@ -193,7 +185,7 @@ const float voltage = battery.ReadVoltage();  // 例: 約 1.65 V
 基準電圧が 3.3 V 以外の基板では、コンストラクタの 2 番目の引数で指定します。
 
 ```cpp
-AnalogIn sensor{kPA1, 3.0F};
+AnalogIn sensor(kPA1, 3.0F);
 ```
 
 ADC 端子に入力できるのは **0 V から基準電圧まで**です。測りたい電圧が 3.3 V を超える場合は、
@@ -206,10 +198,9 @@ ADC 端子に入力できるのは **0 V から基準電圧まで**です。測�
 指定する方法が分かりやすいです。
 
 ```cpp
-Pwm servo{kTim3, kCh1, kPB4, 50};  // TIM3 CH1 / PB4 / 50 Hz
-if (!servo.Initialize()) {
-  System::ErrorHandler();
-}
+Pwm servo(kTim3, kCh1, kPB4, 50);  // TIM3 CH1 / PB4 / 50 Hz
+
+servo.Initialize();
 
 servo.SetPulseWidthUs(1'000);  // 1.0 ms
 SleepFor(1s);
@@ -248,10 +239,9 @@ NUCLEO と接続します。
 ```cpp
 #include <array>
 
-I2c i2c{kI2c1, kPB6, kPB7, 400'000};
-if (!i2c.Initialize()) {
-  System::ErrorHandler();
-}
+I2c i2c(kI2c1, kPB6, kPB7, 400'000);
+
+i2c.Initialize();
 
 std::array<uint8_t, 2> command{0x75, 0x00};
 I2CMessage write_message{
@@ -302,10 +292,9 @@ printf("Hello, Nbed!\\n");
 ```cpp
 #include <array>
 
-Uart device{kUsart3, kPC11, kPB10, 115'200};
-if (!device.Initialize()) {
-  System::ErrorHandler();
-}
+Uart device(kUsart3, kPC11, kPB10, 115'200);
+
+device.Initialize();
 
 const std::array<uint8_t, 3> message{'O', 'K', '\\n'};
 device.Send(message);
@@ -314,7 +303,7 @@ device.Send(message);
 自分で初期化した UART を `printf` の出力先にするには `SetConsole()` を呼びます。
 
 ```cpp
-Uart pc{kUsart2, kPA3, kPA2, 921'600};
+Uart pc(kUsart2, kPA3, kPA2, 921'600);
 if (pc.Initialize()) {
   pc.SetConsole();
 }
@@ -345,17 +334,20 @@ Nbed の CAN は Classic CAN（最大 8 byte/frame）です。NUCLEO のピン�
 両端の終端抵抗、共通 GND を正しく接続してください。CAN FD には対応していません。
 
 ```cpp
-Can can{kCan1, kPB8, kPB9, 1'000'000};
-if (!can.Initialize() || !can.Start()) {
-  System::ErrorHandler();
-}
+Can can(kCan1, kPB8, kPB9);  // CANを定義
 
+can.Initialize();  // CANを初期化
+
+can.Start();  // CANの送受信を開始
+
+// 送信するメッセージを作成 (ID: 0x123, データ長: 3, データ: {0x4E, 0x42, 0x45})
 CanMessage message{
     .id = 0x123,
     .size = 3,
     .data = {0x4E, 0x42, 0x45},
 };
-can.Send(message);
+
+can.Send(message);  // 送信
 ```
 
 既定では標準 ID・拡張 ID とも受信します。標準 ID `0x123` だけを通すには、受信開始前または後に
@@ -369,14 +361,15 @@ can.SetRxFilter(0x123, 0x7ff);
 UART と同様、コールバックは割り込み文脈で短く終える必要があります。
 
 ```cpp
+// 受信したか同課のフラグ (割り込みで書き換えられるので volatile)
 volatile bool has_message = false;
 
+// 受信割り込みのコールバックを設定
 can.SetRxCallback([](const CanMessage&) {
   has_message = true;
 });
-if (!can.EnableRxInterrupt()) {
-  System::ErrorHandler();
-}
+
+can.EnableRxInterrupt();  // 受信割り込みを有効化
 ```
 
 `CanConfig` を使うと、ループバックや割り込み優先度も指定できます。外部配線なしの動作確認には
@@ -399,13 +392,13 @@ Can test_can({
 仕様にある PPR と、逓倍後のカウント数は異なることがあります。
 
 ```cpp
-Encoder encoder{EncoderTimer::kTim3, kPB4, kPB5, 2048};
-if (!encoder.Initialize()) {
-  System::ErrorHandler();
-}
+Encoder encoder(EncoderTimer::kTim3, kPB4, kPB5, 2048);
+
+encoder.Initialize();
 
 const int count = encoder.GetCount();
 const float angle_deg = encoder.GetAngle().GetAsDegree();
+
 encoder.ResetCount();
 ```
 
@@ -554,7 +547,7 @@ build_flags =
 #define NBED_NO_GLOBAL_NAMES
 #include "nbed.h"
 
-nbed::f4::DigitalOut led{nbed::interface::PinName::kPA5};
+nbed::f4::DigitalOut led(nbed::interface::PinName::kPA5);
 ```
 
 `NBED_NO_GLOBAL_FUNCTIONS` を使った場合の待機は、次のように書けます。
