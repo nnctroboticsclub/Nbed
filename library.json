@@ -1,7 +1,7 @@
 {
   "name": "Nbed",
-  "version": "0.1.0",
-  "description": "A beginner-friendly STM32 HAL wrapper for NUCLEO-F446RE.",
+  "version": "0.2.0",
+  "description": "Nbedは、長岡高専ロボティクス部が2026年に開発したSTM32シリーズ向けのマイコン制御ライブラリです。STM32 HALをより簡単かつ扱いやすく利用できるようにすることを目的として開発されています。",
   "keywords": [
     "stm32",
     "stm32f4",
