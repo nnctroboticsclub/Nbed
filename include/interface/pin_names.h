@@ -101,6 +101,30 @@ enum class PinName : std::uint8_t {
   kPH0 = 0x70,
   kPH1 = 0x71,
 
+  kD0 = kPA3,
+  kD1 = kPA2,
+  kD2 = kPA10,
+  kD3 = kPB3,
+  kD4 = kPB5,
+  kD5 = kPB4,
+  kD6 = kPB10,
+  kD7 = kPA8,
+  kD8 = kPA9,
+  kD9 = kPC7,
+  kD10 = kPB6,
+  kD11 = kPA7,
+  kD12 = kPA6,
+  kD13 = kPA5,
+  kD14 = kPB9,
+  kD15 = kPB8,
+
+  kA0 = kPA0,
+  kA1 = kPA1,
+  kA2 = kPA4,
+  kA3 = kPB0,
+  kA4 = kPC1,
+  kA5 = kPC0,
+
   kNC = 0xFF,
 };
 #endif

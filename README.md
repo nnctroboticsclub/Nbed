@@ -97,8 +97,9 @@ if (!output.Initialize()) {
 
 ### ピン名の書き方
 
-`kPA5` は「GPIOA の 5 番ピン」、`kPB8` は「GPIOB の 8 番ピン」です。Arduino 互換コネクタの
-番号ではなく、**STM32 のポート名**で指定します。基板上の信号名と対応表は
+`kPA5` は「GPIOA の 5 番ピン」、`kPB8` は「GPIOB の 8 番ピン」です。STM32 のポート名に加え、
+NUCLEO-F446RE の Arduino 互換コネクタ名も `kD1` や `kA3` のように指定できます。どちらも同じ
+ピンを表す別名なので、すべての機能で混在なく使用できます。基板上の信号名と対応表は
 [対応ピン一覧](#対応ピン一覧)を確認してください。
 
 ### 初期化の順番
@@ -459,6 +460,24 @@ const float radians = target.GetAsRadian();
 | I²C1 SCL | `PB8` | Arduino D15 |
 | I²C1 SDA | `PB9` | Arduino D14 |
 | ADC の例 | `PA0` | Arduino A0 |
+
+Arduino 互換コネクタの表記を使うこともできます。例えばNucleoに搭載されている LED は
+`kD13`（`kPA5` と同じ）、UART の送信は `kD1`（`kPA2` と同じ）、アナログ入力 A3 は
+`kA3`（`kPB0` と同じ）です。
+
+| Arduino 表記 | STM32 ピン | Arduino 表記 | STM32 ピン |
+| --- | --- | --- | --- |
+| `kD0` | `kPA3` | `kD1` | `kPA2` |
+| `kD2` | `kPA10` | `kD3` | `kPB3` |
+| `kD4` | `kPB5` | `kD5` | `kPB4` |
+| `kD6` | `kPB10` | `kD7` | `kPA8` |
+| `kD8` | `kPA9` | `kD9` | `kPC7` |
+| `kD10` | `kPB6` | `kD11` | `kPA7` |
+| `kD12` | `kPA6` | `kD13` | `kPA5` |
+| `kD14` | `kPB9` | `kD15` | `kPB8` |
+| `kA0` | `kPA0` | `kA1` | `kPA1` |
+| `kA2` | `kPA4` | `kA3` | `kPB0` |
+| `kA4` | `kPC1` | `kA5` | `kPC0` |
 
 基板のコネクタ上の詳しい場所は、ST の
 [NUCLEO-64 ユーザーマニュアル](https://www.st.com/resource/en/user_manual/dm00105823.pdf)も参照してください。
