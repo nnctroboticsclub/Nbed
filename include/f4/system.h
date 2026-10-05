@@ -1,4 +1,5 @@
 #pragma once
+// IWYU pragma: private, include "nbed.h"
 
 #include "f4/clock.h"
 #include "interface/error.h"
