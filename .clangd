@@ -1,0 +1,104 @@
+CompileFlags:
+  CompilationDatabase: .
+  Add:
+    - -Iinclude
+    - -Isrc
+    - -std=gnu++23            # C++23のGNU拡張
+    - -fno-exceptions         # 例外処理を無効化
+    - -fno-rtti               # RTTIを無効化
+    - -fno-threadsafe-statics # 静的変数のスレッドセーフな初期化を無効化
+    - -fcoroutines            # コルーチンを有効化
+
+Diagnostics:
+  ClangTidy:
+    Add:
+      - clang-analyzer-*    # Clang Static Analyzerのチェックを有効化
+      - bugprone-*          # バグを引き起こしやすいコードパターンのチェックを有効化
+      - performance-*       # パフォーマンスに関するチェックを有効化
+      - modernize-*         # モダンC++への変換を促すチェックを有効化
+      - readability-*       # 可読性に関するチェックを有効化
+      - cppcoreguidelines-* # C++ Core Guidelinesに基づくチェックを有効化
+
+    Remove:
+      - bugprone-easily-swappable-parameters                # 簡単に入れ替え可能なパラメータのチェックを無効化
+      - cppcoreguidelines-pro-type-vararg                   # 可変引数の型に関するチェックを無効化
+      - cppcoreguidelines-pro-bounds-pointer-arithmetic     # ポインタ演算に関するチェックを無効化
+      - cppcoreguidelines-pro-bounds-constant-array-index   # 定数配列のインデックスに関するチェックを無効化
+      - cppcoreguidelines-avoid-const-or-ref-data-members   # メンバー参照/constの使用を許可
+      - cppcoreguidelines-avoid-c-arrays                    # Cスタイルの配列の使用を推奨するチェックを無効化
+      - modernize-avoid-c-arrays                            # Cスタイルの配列の使用を推奨するチェックを無効化
+      - cppcoreguidelines-pro-bounds-array-to-pointer-decay # 配列からポインタへの減衰に関するチェックを無効化
+      - cppcoreguidelines-avoid-magic-numbers               # マジックナンバーの使用を避けるチェックを無効化
+      - readability-magic-numbers                           # マジックナンバーの使用を避けるチェックを無効化
+      - readability-implicit-bool-conversion                # 暗黙のbool変換を許可
+      - readability-uppercase-literal-suffix                # リテラル接尾辞の大文字指定を無効化
+      - modernize-use-trailing-return-type                  # 後置戻り値型の使用を推奨するチェックを無効化
+      - modernize-use-std-print                             # std::printfの使用を推奨するチェックを無効化
+
+    CheckOptions:
+      readability-function-size.LineThreshold: '150'     # 関数の最大行数
+      readability-function-size.StatementThreshold: '50' # 関数の最大ステートメント数
+      readability-function-size.BranchThreshold: '15'    # 関数の最大分岐数
+      readability-function-size.NestingThreshold: '4'    # 関数の最大ネスト深さ
+      readability-function-size.ParameterThreshold: '5'  # 関数の最大パラメータ数
+
+      readability-braces-around-statements.ShortStatementLines: '1' # 短いステートメントのブレースを許可
+
+      readability-identifier-naming.NamespaceCase: 'lower_case'        # namespace:          lower_case
+      readability-identifier-naming.ClassCase: 'CamelCase'             # class:              CamelCase
+      readability-identifier-naming.StructCase: 'CamelCase'            # struct:             CamelCase
+      readability-identifier-naming.TemplateParameterCase: 'CamelCase' # template parameter: CamelCase
+      readability-identifier-naming.FunctionCase: 'CamelCase'          # function:           CamelCase
+      readability-identifier-naming.ParameterCase: 'snake_case'        # parameter:          snake_case
+      readability-identifier-naming.ConstParameterCase: 'snake_case'   # const parameter:    snake_case
+      readability-identifier-naming.VariableCase: 'snake_case'         # variable:           snake_case
+      readability-identifier-naming.GlobalVariableCase: 'snake_case'   # global variable:    snake_case
+      readability-identifier-naming.GlobalConstantCase: 'CamelCase'    # global const:       kCamelCase
+      readability-identifier-naming.GlobalConstantPrefix: 'k'
+      readability-identifier-naming.ClassMemberCase: 'snake_case'      # class member:       snake_case_
+      readability-identifier-naming.ClassMemberSuffix: '_'
+      readability-identifier-naming.PrivateMemberCase: 'snake_case'
+      readability-identifier-naming.PrivateMemberSuffix: '_'
+      readability-identifier-naming.ProtectedMemberCase: 'snake_case'
+      readability-identifier-naming.ProtectedMemberSuffix: '_'
+      readability-identifier-naming.EnumConstantCase: 'CamelCase'      # enum constant:      kCamelCase
+      readability-identifier-naming.EnumConstantPrefix: 'k'
+      readability-identifier-naming.ConstantCase: 'lower_case'         # constant:           snake_case
+      readability-identifier-naming.ConstantPrefix: ''
+      readability-identifier-naming.ConstexprVariableCase: 'CamelCase' # constexpr variable: kCamelCase
+      readability-identifier-naming.ConstexprVariablePrefix: 'k'
+      readability-identifier-naming.MemberConstantCase: 'lower_case'   # member const:       snake_case
+      readability-identifier-naming.MemberConstantPrefix: ''
+      readability-identifier-naming.StaticConstantCase: 'lower_case'   # static const:       snake_case
+      readability-identifier-naming.StaticConstantPrefix: ''
+
+      readability-identifier-naming.IgnoreMainLikeFunctions: '1'       # main関数の命名規則を無視
+      readability-identifier-naming.FunctionIgnoredRegexp: '^main$'    # main関数を命名規則チェックから除外
+      readability-implicit-bool-conversion.AllowIntegerConditions: '1' # 整数を条件式で暗黙的に使用することを許可
+      readability-implicit-bool-conversion.AllowPointerConditions: '1' # ポインタを条件式で暗黙的に使用することを許可
+      readability-function-cognitive-complexity.IgnoreMacros: '1'      # マクロ内のコードを認知的複雑性の計算から除外
+
+      readability-identifier-length.MinimumVariableNameLength: '1'     # 変数名は1文字を許可
+      readability-identifier-length.MinimumLoopCounterNameLength: '1'  # ループ変数名は1文字を許可
+      readability-identifier-length.MinimumParameterNameLength: '1'    # 関数引数名は1文字を許可
+
+---
+
+# バックグラウンドインデックス設定
+Index:
+  Background: Build     # バックグラウンドでインデックスを構築
+  StandardLibrary: true # 標準ライブラリのインデックスを無効化
+
+# ASTベースの補完とホバー情報
+InlayHints:
+  Enabled: true        # ASTベースの補完とホバー情報を有効化
+  Designators: false   # デザイネータのヒントを表示
+  DeducedTypes: true   # 推論された型のヒントを表示
+  ParameterNames: true # 関数呼び出しの引数名のヒントを表示
+
+# ホバー表示設定
+Hover:
+  ShowAKA: true  # 型の別名を表示
+
+Documentation:
+  CommentFormat: Doxygen  # ドキュメントコメントのフォーマットをDoxygenスタイルに設定

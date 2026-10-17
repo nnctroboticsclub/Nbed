@@ -1,0 +1,80 @@
+Language: Cpp                                    # 言語 : C++
+BasedOnStyle: Google                             # ベースとなるスタイルをGoogleに設定
+AccessModifierOffset: -1                         # アクセス修飾子のインデントを減らす
+AlignAfterOpenBracket: Align                     # 開き括弧の後を揃える
+AlignConsecutiveAssignments: None                # 連続する代入を揃えない
+AlignOperands: Align                             # 演算子を揃える
+AllowAllArgumentsOnNextLine: true                # すべての引数を次の行に配置することを許可
+AllowAllConstructorInitializersOnNextLine: true  # すべてのコンストラクタ初期化子を次の行に配置することを許可
+AllowAllParametersOfDeclarationOnNextLine: false # 宣言のすべてのパラメーターを次の行に配置することを許可しない
+AllowShortBlocksOnASingleLine: Empty             # 空のブロックを1行で許可
+AllowShortCaseLabelsOnASingleLine: false         # 短いcaseラベルを1行で許可しない
+AllowShortFunctionsOnASingleLine: None           # 短い関数を1行で許可しない (default : Inline)
+AllowShortIfStatementsOnASingleLine: Never       # 短いif文を1行で許可しない
+AllowShortLambdasOnASingleLine: Inline           # 短いラムダをインラインで許可
+AllowShortLoopsOnASingleLine: false              # 短いループを1行で許可しない
+AlwaysBreakAfterReturnType: None                 # 戻り値の後を常に改行するかどうかを指定しない
+AlwaysBreakTemplateDeclarations: Yes             # テンプレート宣言の後を常に改行する
+BinPackArguments: true                           # 引数をビンパックする
+BreakBeforeBraces: Custom                        # ブレースの前に改行するかどうかをカスタムで指定
+BraceWrapping:
+  AfterCaseLabel: false                          # caseラベルの後にブレースを改行しない
+  AfterClass: false                              # クラスの後にブレースを改行しない
+  AfterStruct: false                             # 構造体の後にブレースを改行しない
+  AfterControlStatement: Never                   # 制御文の後にブレースを改行しない
+  AfterEnum: false                               # 列挙型の後にブレースを改行しない
+  AfterFunction: false                           # 関数の後にブレースを改行しない
+  AfterNamespace: false                          # 名前空間の後にブレースを改行しない
+  AfterUnion: false                              # 共用体の後にブレースを改行しない
+  AfterExternBlock: false                        # externブロックの後にブレースを改行しない
+  BeforeCatch: false                             # catchの前にブレースを改行しない
+  BeforeElse: false                              # elseの前にブレースを改行しない
+  BeforeLambdaBody: false                        # ラムダの前にブレースを改行しない
+  IndentBraces: false                            # ブレースをインデントしない
+  SplitEmptyFunction: false                      # 空の関数を分割しない
+  SplitEmptyRecord: false                        # 空のレコードを分割しない
+  SplitEmptyNamespace: false                     # 空の名前空間を分割しない
+BreakBeforeBinaryOperators: None                 # 二項演算子の前に改行するかどうかを指定しない
+BreakBeforeTernaryOperators: true                # 三項演算子の前に改行する
+BreakConstructorInitializers: BeforeColon        # コンストラクタ初期化子の前に改行する
+BreakInheritanceList: BeforeColon                # 継承リストの前に改行する
+ColumnLimit: 80                                  # 列の最大幅を80に設定
+CompactNamespaces: false                         # 名前空間をコンパクトにしない
+ContinuationIndentWidth: 4                       # 継続行のインデント幅を4に設定
+Cpp11BracedListStyle: true                       # C++11のブレースリストスタイルを使用する
+DerivePointerAlignment: false                    # ポインタの配置を派生しない
+EmptyLineBeforeAccessModifier: LogicalBlock      # アクセス修飾子の前に空行を入れる
+FixNamespaceComments: true                       # 名前空間コメントを修正する
+IncludeBlocks: Preserve                          # インクルードブロックを保持する
+IndentCaseLabels: true                           # caseラベルをインデントする
+IndentPPDirectives: None                         # プリプロセッサディレクティブのインデントを指定しない
+IndentWidth: 2                                   # インデント幅を2に設定
+InsertNewlineAtEOF: true                         # ファイルの最後に改行を挿入する (added)
+KeepEmptyLinesAtTheStartOfBlocks: true           # ブロックの先頭の空行を保持する
+MaxEmptyLinesToKeep: 1                           # 保持する空行の最大数を1に設定
+NamespaceIndentation: None                       # 名前空間のインデントを指定しない
+ObjCSpaceAfterProperty: false                    # Objective-Cのプロパティの後にスペースを入れない
+ObjCSpaceBeforeProtocolList: true                # Objective-Cのプロトコルリストの前にスペースを入れる
+PointerAlignment: Left                           # ポインタの配置を左に設定
+ReflowComments: false                            # コメントの再フローを行わない
+SeparateDefinitionBlocks: Always                 # 定義ブロックを常に分割する
+SpaceAfterCStyleCast: false                      # Cスタイルキャストの後にスペースを入れない
+SpaceAfterLogicalNot: false                      # 論理NOTの後にスペースを入れない
+SpaceAfterTemplateKeyword: true                  # テンプレートキーワードの後にスペースを入れる
+SpaceBeforeAssignmentOperators: true             # 代入演算子の前にスペースを入れる
+SpaceBeforeCpp11BracedList: false                # C++11のブレースリストの前にスペースを入れない
+SpaceBeforeCtorInitializerColon: true            # コンストラクタ初期化子の前にスペースを入れる
+SpaceBeforeInheritanceColon: true                # 継承の前にスペースを入れる
+SpaceBeforeParens: ControlStatements             # 制御文の前にスペースを入れる
+SpaceBeforeRangeBasedForLoopColon: true          # 範囲ベースのforループの前にスペースを入れる
+SpaceBeforeSquareBrackets: false                 # 角括弧の前にスペースを入れない
+SpaceInEmptyParentheses: false                   # 空の括弧の中にスペースを入れない
+SpacesBeforeTrailingComments: 2                  # 行末コメントの前にスペースを2つ入れる
+SpacesInAngles: false                            # 角括弧の中にスペースを入れない
+SpacesInCStyleCastParentheses: false             # Cスタイルキャストの括弧の中にスペースを入れない
+SpacesInContainerLiterals: false                 # コンテナリテラルの中にスペースを入れない
+SpacesInParentheses: false                       # 括弧の中にスペースを入れない
+SpacesInSquareBrackets: false                    # 角括弧の中にスペースを入れない
+Standard: c++20                                  # C++20を使用する
+TabWidth: 4                                      # タブ幅を4に設定
+UseTab: Never                                    # タブを使用しない

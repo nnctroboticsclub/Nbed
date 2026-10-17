@@ -1,0 +1,119 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Nbed: ビルド（LED点滅）",
+      "type": "process",
+      "command": "pio",
+      "args": [
+        "run",
+        "--environment",
+        "f4-blink"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$platformio"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Nbed: 書込み（LED点滅）",
+      "type": "process",
+      "command": "pio",
+      "args": [
+        "run",
+        "--environment",
+        "f4-blink",
+        "--target",
+        "upload"
+      ],
+      "problemMatcher": [
+        "$platformio"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Nbed: シリアルモニター（LED点滅）",
+      "type": "process",
+      "command": "pio",
+      "args": [
+        "device",
+        "monitor",
+        "--environment",
+        "f4-blink"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true,
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Nbed: clangd用ビルド情報を更新",
+      "type": "process",
+      "command": "pio",
+      "args": [
+        "run",
+        "--environment",
+        "f4-blink",
+        "--target",
+        "compiledb"
+      ],
+      "problemMatcher": [
+        "$platformio"
+      ],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Nbed: ビルド結果を消去（LED点滅）",
+      "type": "process",
+      "command": "pio",
+      "args": [
+        "run",
+        "--environment",
+        "f4-blink",
+        "--target",
+        "clean"
+      ],
+      "problemMatcher": [
+        "$platformio"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}

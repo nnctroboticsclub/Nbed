@@ -6,12 +6,13 @@ Nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、UART、CAN、
 検出します。
 
 初心者はまず `#include "nbed.h"` と `System::Initialize()` だけ覚えれば大丈夫です。  
-こちらの [サンプル](最初に動かす) にチュートリアルとしてLチカの例があります。
+こちらの [サンプル](#最初に動かす) にチュートリアルとしてLチカの例があります。
 
 ## 目次
 
 - [Nbed](#nbed)
   - [目次](#目次)
+  - [このリポジトリで開発する](#このリポジトリで開発する)
   - [最初に動かす](#最初に動かす)
     - [必要なもの](#必要なもの)
   - [共通の考え方](#共通の考え方)
@@ -51,6 +52,28 @@ Nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、UART、CAN、
   - [コントリビューター](#コントリビューター)
   - [ライセンス](#ライセンス)
   - [バージョン履歴](#バージョン履歴)
+
+## このリポジトリで開発する
+
+ライブラリ本体と PlatformIO の開発環境を、このリポジトリでまとめて管理します。
+このフォルダを VS Code で開き、PlatformIO IDE を有効にしてください。
+サブモジュールの初期化や、別の Nbed-dev リポジトリは不要です。
+
+```sh
+git clone https://github.com/nnctroboticsclub/Nbed.git
+cd Nbed
+pio run
+```
+
+既定では、外部配線なしで使える基板上 LED の点滅例 `f4-blink` をビルドします。
+NUCLEO-F446RE に書き込む場合は `pio run -e f4-blink -t upload` を実行します。
+`include/`・`src/` を編集すると、次のビルドにその変更が直接反映されます。
+ほかのサンプルの選び方、全環境のビルド、フォルダ構成は
+[開発ガイド](docs/development.md)を参照してください。
+
+別のアプリケーションから Nbed を使う場合は、従来どおりそのプロジェクトの
+`lib_deps` に Nbed を指定します。設定例は
+[PlatformIO に残す設定](#platformio-に残す設定)にあります。
 
 ## 最初に動かす
 
@@ -597,7 +620,11 @@ Nbed の `library.json` は `extra_script.py` を呼び、ライブラリの配�
 platform = ststm32@20.0.0
 framework = stm32cube
 board = nucleo_f446re
+platform_packages =
+  toolchain-gccarmnoneeabi@1.140201.0
+  framework-stm32cubef4@1.28.3
 board_build.stm32cube.custom_config_header = yes
+lib_deps = https://github.com/nnctroboticsclub/Nbed.git
 ```
 
 `custom_config_header = yes` は、Nbed に同梱した `stm32f4xx_hal_conf.h` を STM32Cube HAL が使う

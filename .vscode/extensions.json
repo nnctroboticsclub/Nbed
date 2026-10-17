@@ -1,0 +1,23 @@
+{
+    // See http://go.microsoft.com/fwlink/?LinkId=827846
+    // for the documentation about the extensions.json format
+    "recommendations": [
+        "alexnesnes.teleplot",
+        "bierner.github-markdown-preview",
+        "cschlosser.doxdocgen",
+        "davidanson.vscode-markdownlint",
+        "github.vscode-pull-request-github",
+        "gruntfuggly.todo-tree",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "mhutchie.git-graph",
+        "ms-vscode.cpptools",
+        "pkief.material-icon-theme",
+        "platformio.platformio-ide",
+        "usernamehw.errorlens",
+        "yzhang.markdown-all-in-one"
+    ],
+    "unwantedRecommendations": [
+        "ms-vscode.cpptools-extension-pack",
+        "pioarduino.pioarduino-ide"
+    ]
+}

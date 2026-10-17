@@ -17,6 +17,17 @@
   "dependencies": {
     "logger": "https://github.com/nnctroboticsclub/logger/archive/refs/tags/v0.3.0.zip"
   },
+  "export": {
+    "include": [
+      "include",
+      "src",
+      "linker",
+      "extra_script.py",
+      "library.json",
+      "README.md",
+      "LICENSE"
+    ]
+  },
   "build": {
     "extraScript": "extra_script.py"
   }
