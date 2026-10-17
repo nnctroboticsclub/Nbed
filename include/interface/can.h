@@ -1,5 +1,4 @@
 #pragma once
-// IWYU pragma: private, include "nbed.h"
 
 #include <array>
 #include <cstdint>
