@@ -50,15 +50,17 @@ class Current {
     return current;
   }
 
-  static constexpr Current FromMilliAmpere(float mA) {
+  static constexpr Current FromMilliAmpere(float milli_amps) {
     Current current;
-    current.SetAsMilliAmpere(mA);
+    current.SetAsMilliAmpere(milli_amps);
     return current;
   }
 
   constexpr void SetAsAmpere(float amp) { ampere_ = amp; }
 
-  constexpr void SetAsMilliAmpere(float mA) { ampere_ = mA / 1000.0f; }
+  constexpr void SetAsMilliAmpere(float milli_amps) {
+    ampere_ = milli_amps / 1000.0f;
+  }
 
   [[nodiscard]] constexpr float GetAsAmpere() const { return ampere_; }
 
@@ -74,7 +76,7 @@ class Torque {
  public:
   constexpr void SetAsNm(float nm) { nm_ = nm; }
 
-  constexpr void SetAsMNm(float mNm) { nm_ = mNm / 1000.0f; }
+  constexpr void SetAsMNm(float milli_nm) { nm_ = milli_nm / 1000.0f; }
 
   [[nodiscard]] constexpr float GetAsNm() const { return nm_; }
 
