@@ -19,7 +19,8 @@
   "files.associations": {
     "*.h": "cpp",
     ".clangd": "yaml",
-    ".clang-format": "yaml"
+    ".clang-format": "yaml",
+    "LICENSE": "plaintext",
   },
   "C_Cpp.intelliSenseEngine": "disabled",
 

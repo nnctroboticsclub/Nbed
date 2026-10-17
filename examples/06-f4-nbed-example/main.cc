@@ -29,7 +29,7 @@ void DigitalExample() {
     // 以下のようにDigitalOutとDigitalInの代入演算子を使うこともできる
     // led = button == kIsButtonPressed;
 
-    printf("Button state: %d\n", button.Read());
+    printf("Button state: %d\n", static_cast<int>(button.Read()));
   }
 }
 

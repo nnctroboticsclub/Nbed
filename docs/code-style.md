@@ -186,15 +186,23 @@ clangd に含まれないチェックもあります。単独の clang-tidy に 
 
 ### チェックの例外
 
-共通の `Remove` は次の 5 個です。
+共通の `Remove` は次の 6 個です。
 
 | チェック | 理由 |
 | --- | --- |
 | `cppcoreguidelines-avoid-const-or-ref-data-members` | ハードウェアを参照で共有する設計や、初期化後に変えないメンバーを許可 |
-| `cppcoreguidelines-avoid-magic-numbers` | 同義の `readability-magic-numbers` 側に統一 |
+| `cppcoreguidelines-avoid-magic-numbers` | マジックナンバーの別名チェックも無効化 |
 | `cppcoreguidelines-pro-type-vararg` | `printf` 等の C API を使用 |
 | `modernize-use-std-print` | 裸のマイコンで `<print>` の提供・実装負荷を前提にしない |
 | `modernize-use-trailing-return-type` | 通常の戻り値を先に書く Google の表記を維持 |
+| `readability-magic-numbers` | 通信設定・単位換算・ピン指定・サンプル等の数値の直書きを許可 |
+
+マジックナンバーの警告は整数・浮動小数点数ともにプロジェクト全体で無効です。
+レジスター操作に限らず、通信速度、配列の要素、単位の換算係数などにも多数の警告が
+出るため、値ごとの許可リストや個別の `NOLINT` を増やす運用は採用しません。
+Google を基準とする命名・整形の方針は維持し、意味が分かりにくい値や繰り返し使う
+設定値には、レビューで必要性を判断して `constexpr` の名前付き定数を使います。
+この変更は数値リテラルの命名要求だけが対象で、型・境界等の他の診断は継続します。
 
 `f4/` に限って追加で無効にするチェックは次のとおりです。
 この範囲外のアプリケーションやインターフェースでは引き続き検出します。
@@ -210,10 +218,23 @@ clangd に含まれないチェックもあります。単独の clang-tidy に 
 | `cppcoreguidelines-pro-type-cstyle-cast` | 外部の HAL/CMSIS マクロに含まれる C のキャスト |
 | `cppcoreguidelines-pro-type-reinterpret-cast` | 固定番地・リンカー定義アドレス |
 | `performance-no-int-to-ptr` | メモリーマップドレジスター等、整数として規定された番地の利用 |
-| `readability-magic-numbers` | レジスター値・ビット位置・ハードウェア上の定数 |
 
 これらはファイル単位の例外なので、同じファイルの手書きコードにも作用します。
 上位ロジックまで `f4/` に置かず、外部 API と接する範囲を小さく保ってください。
+
+### リテラルの接尾辞
+
+`readability-uppercase-literal-suffix` は有効にしたまま、
+`NewSuffixes: 'U;L;UL;LU;LL;ULL;LLU;Z;UZ;ZU'` で検査する接尾辞を限定しています。
+このリストとの大文字・小文字を無視した比較で一致する接尾辞だけが、指定の形へ修正する対象です。
+
+- `0.5f` と `0.5F` は両方を許可し、どちらかへの統一を要求しません。
+- `7l`、`7ll`、`7ul` 等は、数字の `1` と紛らわしい小文字の `l` を含むため警告します。
+- 整数の `u` は従来どおり `U` を推奨します。`UL` / `ULL` 等の組合せも大文字です。
+- C++23 のサイズ型の接尾辞は `Z` / `UZ` / `ZU`、long double は `L` を使います。
+
+`f` と `F` は C++ 上で同じ float 型です。Google の公式の記述例も小文字の `f` を使うため、
+この点を大文字にする警告は不要と判断しています。ソースの数値や型を一括変更する設定ではありません。
 
 ### 複雑さ・制御文・名前の長さ
 
@@ -306,7 +327,7 @@ class は private/protected のデータを持ち、struct は public のデー�
 外部ライブラリ、SDK、生成物、Python、Markdown、リンカースクリプトには
 C++ 用フォーマッターを適用していません。意図的な `clang-format off/on` 区間は維持しています。
 命名の変更やロジックの書き換え、診断の自動修正は一括適用していません。
-既存の単位表現の引数名・数値リテラル等には、整形と別に検討すべき診断が残る場合があります。
+既存の単位表現の引数名等には、整形と別に検討すべき診断が残る場合があります。
 
 ## 日常の整形と確認
 
@@ -383,7 +404,7 @@ Windows / clangd 23.1.0 で、次を確認しています。
 | 全 8 個の PlatformIO 環境 | ビルド成功 |
 | 整形前後のソース内容の比較 | 空白・include 順序・コメント以外のコードテキスト差分なし |
 
-既存コードには数値リテラル、接尾辞、命名、bool 変換、`auto` の提案などが残っています。
+既存コードには命名、bool 変換、`auto` の提案などが残っています。
 HAL マクロ由来の `-Wdeprecated-volatile` も 1 件確認しています。
 これらを消すための包括的な抑制や API の変更は行っていません。
 今回のビルド確認には実機への書込み・動作確認は含みません。
@@ -397,6 +418,8 @@ HAL マクロ由来の `-Wdeprecated-volatile` も 1 件確認しています。
 - [命名規則の各オプション](https://clang.llvm.org/extra/clang-tidy/checks/readability/identifier-naming.html)
 - [マクロ内の do-while の扱い](https://clang.llvm.org/extra/clang-tidy/checks/cppcoreguidelines/avoid-do-while.html)
 - [予約識別子の限定的な許可](https://clang.llvm.org/extra/clang-tidy/checks/bugprone/reserved-identifier.html)
+- [マジックナンバーの診断](https://clang.llvm.org/extra/clang-tidy/checks/readability/magic-numbers.html)
+- [リテラル接尾辞の診断と NewSuffixes](https://clang.llvm.org/extra/clang-tidy/checks/readability/uppercase-literal-suffix.html)
 
 オンラインの LLVM 資料は開発中の版を指すことがあるため、対応バージョンの表記と、
 実際に使用する clangd / clang-format での動作を併せて確認してください。

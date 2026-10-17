@@ -13,6 +13,6 @@ int main() {
 
   while (true) {
     led = !button;
-    printf("Button state: %d\n", button.Read());
+    printf("Button state: %d\n", static_cast<int>(button.Read()));
   }
 }

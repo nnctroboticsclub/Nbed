@@ -56,10 +56,11 @@ Diagnostics:
       - readability-*
     Remove:
       - cppcoreguidelines-avoid-const-or-ref-data-members  # 参照でハードウェアを共有
-      - cppcoreguidelines-avoid-magic-numbers  # 同義の readability 側に統一
+      - cppcoreguidelines-avoid-magic-numbers  # マジックナンバーの別名チェックも無効化
       - cppcoreguidelines-pro-type-vararg  # printf 等の組み込み C API を許可
       - modernize-use-std-print  # 裸のマイコンでは <print> の提供を前提にしない
       - modernize-use-trailing-return-type  # Google の通常の戻り値表記を維持
+      - readability-magic-numbers  # 通信設定・単位換算・サンプル等の数値の直書きを許可
     CheckOptions:
       # HAL に多い do { ... } while (0) は対象外。通常のループは診断する。
       cppcoreguidelines-avoid-do-while.IgnoreMacros: 'true'
@@ -123,6 +124,8 @@ Diagnostics:
       readability-implicit-bool-conversion.AllowIntegerConditions: 'true'
       readability-implicit-bool-conversion.AllowPointerConditions: 'true'
       readability-simplify-boolean-expr.IgnoreMacros: 'true'  # 外部マクロの条件式は変更しない
+      # float の f/F は両方許可。整数の U/L/Z と long double の L は大文字に揃える。
+      readability-uppercase-literal-suffix.NewSuffixes: 'U;L;UL;LU;LL;ULL;LLU;Z;UZ;ZU'
 
 ---
 # STM32/HAL に接する低層コードに限った例外。上位コードでは検出を維持。
@@ -141,7 +144,6 @@ Diagnostics:
       - cppcoreguidelines-pro-type-reinterpret-cast  # メモリマップドレジスター等
       - modernize-avoid-c-arrays
       - performance-no-int-to-ptr  # 固定番地のレジスター・リンカー定義アドレス
-      - readability-magic-numbers  # レジスター値・ビット位置・ハードウェア定数
     CheckOptions:
       # レジスター・HAL 初期化の手順は上位コードより長くなりやすい。
       readability-function-size.LineThreshold: '150'
