@@ -40,9 +40,7 @@ void Time::OnSysTick() {
   }
 }
 
-uint32_t Time::Milliseconds() {
-  return HAL_GetTick();
-}
+uint32_t Time::Milliseconds() { return HAL_GetTick(); }
 
 uint64_t Time::Microseconds() {
   const TimeState& state = State();
@@ -57,7 +55,9 @@ uint64_t Time::Microseconds() {
   uint32_t first_tick = 0;
   uint32_t second_tick = 0;
   uint32_t dwt_cycles_at_tick = 0;
-  do {  // NOLINT
+  // Sample the SysTick at least once and retry if an interrupt intervenes.
+  // NOLINTNEXTLINE(cppcoreguidelines-avoid-do-while)
+  do {
     first_tick = Milliseconds();
     dwt_cycles_at_tick = state.dwt_cycles_at_last_tick;
     second_tick = Milliseconds();
@@ -91,9 +91,7 @@ void Timer::Reset() {
   }
 }
 
-bool Timer::IsRunning() const {
-  return running_;
-}
+bool Timer::IsRunning() const { return running_; }
 
 uint64_t Timer::ElapsedMicroseconds() const {
   return elapsed_us_ + (running_ ? Time::Microseconds() - started_at_us_ : 0U);

@@ -2,10 +2,9 @@
 
 #include "f4/gpio.h"
 
+#include "f4/pin_mapper.h"
 #include "stm32f4xx_hal.h"  // IWYU pragma: keep
 #include "stm32f4xx_hal_gpio.h"
-
-#include "f4/pin_mapper.h"
 
 namespace nbed::f4 {
 namespace {
@@ -21,8 +20,7 @@ uint32_t ToHalPull(GpioPull pull) {
 }  // namespace
 
 DigitalOut::DigitalOut(interface::PinName pin, bool initial_value)
-    : pin_(pin), initial_value_(initial_value) {
-}
+    : pin_(pin), initial_value_(initial_value) {}
 
 bool DigitalOut::Initialize() {
   if (initialized_) {
@@ -60,8 +58,7 @@ bool DigitalOut::Read() const {
 }
 
 DigitalIn::DigitalIn(interface::PinName pin, GpioPull pull)
-    : pin_(pin), pull_(pull) {
-}
+    : pin_(pin), pull_(pull) {}
 
 bool DigitalIn::Initialize() {
   if (initialized_) {

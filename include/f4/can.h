@@ -3,11 +3,10 @@
 
 #include <cstdint>
 
-#include "stm32f4xx_hal.h"  // IWYU pragma: export
-#include "stm32f4xx_hal_can.h"
-
 #include "interface/can.h"
 #include "interface/pin_names.h"
+#include "stm32f4xx_hal.h"  // IWYU pragma: export
+#include "stm32f4xx_hal_can.h"
 
 namespace nbed::f4 {
 

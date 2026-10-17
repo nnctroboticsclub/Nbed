@@ -4,11 +4,10 @@
 
 #include <cmath>
 
+#include "f4/pin_mapper.h"
 #include "stm32f4xx_hal_adc.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_rcc.h"
-
-#include "f4/pin_mapper.h"
 
 namespace nbed::f4 {
 namespace {
@@ -26,9 +25,9 @@ bool InitializeAdc() {
   if (Adc1Initialized()) {
     return true;
   }
-  __HAL_RCC_ADC1_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_ADC1_CLK_ENABLE();
   ADC_HandleTypeDef& adc1 = Adc1();
-  adc1.Instance = ADC1;  // NOLINT
+  adc1.Instance = ADC1;
   // PCLK2 is 90 MHz in the default configuration. /2 would clock the ADC at
   // 45 MHz, above the STM32F446's 36 MHz maximum rating.
   adc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
@@ -51,8 +50,7 @@ bool InitializeAdc() {
 }  // namespace
 
 AnalogIn::AnalogIn(interface::PinName pin, float reference_voltage)
-    : pin_(pin), reference_voltage_(reference_voltage) {
-}
+    : pin_(pin), reference_voltage_(reference_voltage) {}
 
 bool AnalogIn::Initialize() {
   if (initialized_) {
@@ -94,9 +92,7 @@ float AnalogIn::ReadRatio() {
   return static_cast<float>(value) / 4095.0F;
 }
 
-float AnalogIn::ReadVoltage() {
-  return ReadRatio() * reference_voltage_;
-}
+float AnalogIn::ReadVoltage() { return ReadRatio() * reference_voltage_; }
 
 bool AnalogIn::IsValidPin() const {
   return PinMapper::IsValidPin(pin_) && Channel() != 0xffffffffU;

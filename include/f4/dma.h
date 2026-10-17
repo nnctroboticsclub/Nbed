@@ -1,7 +1,6 @@
 #pragma once
 
 #include "interface/dma.h"
-
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_dma.h"
 

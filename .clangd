@@ -1,104 +1,187 @@
+# clangd 23.1.0 用。Google C++ を基準に、組み込み向けの例外を末尾に分離。
+
+# ビルド設定: include・CPU・C/C++ 規格は PlatformIO の DB をそのまま使う。
 CompileFlags:
   CompilationDatabase: .
-  Add:
-    - -Iinclude
-    - -Isrc
-    - -std=gnu++23            # C++23のGNU拡張
-    - -fno-exceptions         # 例外処理を無効化
-    - -fno-rtti               # RTTIを無効化
-    - -fno-threadsafe-statics # 静的変数のスレッドセーフな初期化を無効化
-    - -fcoroutines            # コルーチンを有効化
+# C ファイルにも C++ のフラグを強制しない。ビルド条件は DB に集約する。
 
-Diagnostics:
-  ClangTidy:
-    Add:
-      - clang-analyzer-*    # Clang Static Analyzerのチェックを有効化
-      - bugprone-*          # バグを引き起こしやすいコードパターンのチェックを有効化
-      - performance-*       # パフォーマンスに関するチェックを有効化
-      - modernize-*         # モダンC++への変換を促すチェックを有効化
-      - readability-*       # 可読性に関するチェックを有効化
-      - cppcoreguidelines-* # C++ Core Guidelinesに基づくチェックを有効化
+# インデックス・補完
+Index:
+  Background: Build
+  StandardLibrary: true  # 標準ライブラリも索引化する
+Completion:
+  ArgumentLists: Delimiters  # 引数の型・仮名を挿入せず、括弧を補完
+  HeaderInsertion: IWYU
 
-    Remove:
-      - bugprone-easily-swappable-parameters                # 簡単に入れ替え可能なパラメータのチェックを無効化
-      - cppcoreguidelines-pro-type-vararg                   # 可変引数の型に関するチェックを無効化
-      - cppcoreguidelines-pro-bounds-pointer-arithmetic     # ポインタ演算に関するチェックを無効化
-      - cppcoreguidelines-pro-bounds-constant-array-index   # 定数配列のインデックスに関するチェックを無効化
-      - cppcoreguidelines-avoid-const-or-ref-data-members   # メンバー参照/constの使用を許可
-      - cppcoreguidelines-avoid-c-arrays                    # Cスタイルの配列の使用を推奨するチェックを無効化
-      - modernize-avoid-c-arrays                            # Cスタイルの配列の使用を推奨するチェックを無効化
-      - cppcoreguidelines-pro-bounds-array-to-pointer-decay # 配列からポインタへの減衰に関するチェックを無効化
-      - cppcoreguidelines-avoid-magic-numbers               # マジックナンバーの使用を避けるチェックを無効化
-      - readability-magic-numbers                           # マジックナンバーの使用を避けるチェックを無効化
-      - readability-implicit-bool-conversion                # 暗黙のbool変換を許可
-      - readability-uppercase-literal-suffix                # リテラル接尾辞の大文字指定を無効化
-      - modernize-use-trailing-return-type                  # 後置戻り値型の使用を推奨するチェックを無効化
-      - modernize-use-std-print                             # std::printfの使用を推奨するチェックを無効化
-
-    CheckOptions:
-      readability-function-size.LineThreshold: '150'     # 関数の最大行数
-      readability-function-size.StatementThreshold: '50' # 関数の最大ステートメント数
-      readability-function-size.BranchThreshold: '15'    # 関数の最大分岐数
-      readability-function-size.NestingThreshold: '4'    # 関数の最大ネスト深さ
-      readability-function-size.ParameterThreshold: '5'  # 関数の最大パラメータ数
-
-      readability-braces-around-statements.ShortStatementLines: '1' # 短いステートメントのブレースを許可
-
-      readability-identifier-naming.NamespaceCase: 'lower_case'        # namespace:          lower_case
-      readability-identifier-naming.ClassCase: 'CamelCase'             # class:              CamelCase
-      readability-identifier-naming.StructCase: 'CamelCase'            # struct:             CamelCase
-      readability-identifier-naming.TemplateParameterCase: 'CamelCase' # template parameter: CamelCase
-      readability-identifier-naming.FunctionCase: 'CamelCase'          # function:           CamelCase
-      readability-identifier-naming.ParameterCase: 'snake_case'        # parameter:          snake_case
-      readability-identifier-naming.ConstParameterCase: 'snake_case'   # const parameter:    snake_case
-      readability-identifier-naming.VariableCase: 'snake_case'         # variable:           snake_case
-      readability-identifier-naming.GlobalVariableCase: 'snake_case'   # global variable:    snake_case
-      readability-identifier-naming.GlobalConstantCase: 'CamelCase'    # global const:       kCamelCase
-      readability-identifier-naming.GlobalConstantPrefix: 'k'
-      readability-identifier-naming.ClassMemberCase: 'snake_case'      # class member:       snake_case_
-      readability-identifier-naming.ClassMemberSuffix: '_'
-      readability-identifier-naming.PrivateMemberCase: 'snake_case'
-      readability-identifier-naming.PrivateMemberSuffix: '_'
-      readability-identifier-naming.ProtectedMemberCase: 'snake_case'
-      readability-identifier-naming.ProtectedMemberSuffix: '_'
-      readability-identifier-naming.EnumConstantCase: 'CamelCase'      # enum constant:      kCamelCase
-      readability-identifier-naming.EnumConstantPrefix: 'k'
-      readability-identifier-naming.ConstantCase: 'lower_case'         # constant:           snake_case
-      readability-identifier-naming.ConstantPrefix: ''
-      readability-identifier-naming.ConstexprVariableCase: 'CamelCase' # constexpr variable: kCamelCase
-      readability-identifier-naming.ConstexprVariablePrefix: 'k'
-      readability-identifier-naming.MemberConstantCase: 'lower_case'   # member const:       snake_case
-      readability-identifier-naming.MemberConstantPrefix: ''
-      readability-identifier-naming.StaticConstantCase: 'lower_case'   # static const:       snake_case
-      readability-identifier-naming.StaticConstantPrefix: ''
-
-      readability-identifier-naming.IgnoreMainLikeFunctions: '1'       # main関数の命名規則を無視
-      readability-identifier-naming.FunctionIgnoredRegexp: '^main$'    # main関数を命名規則チェックから除外
-      readability-implicit-bool-conversion.AllowIntegerConditions: '1' # 整数を条件式で暗黙的に使用することを許可
-      readability-implicit-bool-conversion.AllowPointerConditions: '1' # ポインタを条件式で暗黙的に使用することを許可
-      readability-function-cognitive-complexity.IgnoreMacros: '1'      # マクロ内のコードを認知的複雑性の計算から除外
-
-      readability-identifier-length.MinimumVariableNameLength: '1'     # 変数名は1文字を許可
-      readability-identifier-length.MinimumLoopCounterNameLength: '1'  # ループ変数名は1文字を許可
-      readability-identifier-length.MinimumParameterNameLength: '1'    # 関数引数名は1文字を許可
+# 表示（ソースへは書き込まれない）
+Documentation:
+  CommentFormat: Doxygen  # ホバー・補完で Doxygen コメントを解釈
+Hover:
+  ShowAKA: true
+InlayHints:
+  BlockEnd: true  # 長いブロックの終端を表示
+  DeducedTypes: true
+  DefaultArguments: true  # 省略された既定引数を表示
+  Designators: true  # 集成体初期化のフィールド名を表示
+  Enabled: true
+  ParameterNames: true
+  TypeNameLimit: 24  # 長い推論型の表示を制限
 
 ---
+# 自分たちの C++ コードだけに方針を適用。HAL の C 設定は対象外。
+If:
+  PathMatch: '(include|src|examples|test|tests)/.*\.(cc|cpp|cxx|h|hpp)$'
+  PathExclude: 'include/stm32.*hal_conf\.h'
+Diagnostics:
+  Includes:
+    AnalyzeAngledIncludes: false  # 外部の集約ヘッダーの誤検出を避ける
+    IgnoreHeader:
+      - '(^|/)stm32[^/]*\.h'  # HAL/CMSIS の多段 include を公開 API として扱う
+      - '(^|/)core_cm[^/]*\.h'
+      - '(^|/)bits/.*\.h'  # libstdc++ 内部ヘッダーの直接 include を要求しない
+  MissingIncludes: Strict  # 必要な直接 include の不足を通知
+  UnusedIncludes: Strict  # 不要な include を通知
+  ClangTidy:
+    FastCheckFilter: Strict  # エディターでは高速なチェックを優先
+    Add:
+      - bugprone-*
+      - clang-analyzer-*
+      - cppcoreguidelines-*
+      - google-build-namespaces
+      - google-build-using-namespace
+      - google-explicit-constructor
+      - google-global-names-in-headers
+      - modernize-*
+      - performance-*
+      - readability-*
+    Remove:
+      - cppcoreguidelines-avoid-const-or-ref-data-members  # 参照でハードウェアを共有
+      - cppcoreguidelines-avoid-magic-numbers  # 同義の readability 側に統一
+      - cppcoreguidelines-pro-type-vararg  # printf 等の組み込み C API を許可
+      - modernize-use-std-print  # 裸のマイコンでは <print> の提供を前提にしない
+      - modernize-use-trailing-return-type  # Google の通常の戻り値表記を維持
+    CheckOptions:
+      # HAL に多い do { ... } while (0) は対象外。通常のループは診断する。
+      cppcoreguidelines-avoid-do-while.IgnoreMacros: 'true'
+      # ブレース・複雑さ。短い if/for でもブレースを要求する。
+      readability-braces-around-statements.ShortStatementLines: '0'
+      readability-function-cognitive-complexity.IgnoreMacros: 'true'
+      readability-function-size.BranchThreshold: '15'
+      readability-function-size.LineThreshold: '100'
+      readability-function-size.NestingThreshold: '4'
+      readability-function-size.ParameterThreshold: '6'
+      readability-function-size.StatementThreshold: '50'
 
-# バックグラウンドインデックス設定
-Index:
-  Background: Build     # バックグラウンドでインデックスを構築
-  StandardLibrary: true # 標準ライブラリのインデックスを無効化
+      # 命名形式の lower_case は、単語をアンダースコアで区切る形式。
+      # class の通常メンバーは private/protected、struct は public を想定。
+      # ClassMember は「static メンバー」の意味。const メンバーも同じ末尾 _。
+      # 汎用 ConstantCase は、const メンバーの規則を上書きするため指定しない。
+      readability-identifier-naming.ClassCase: CamelCase
+      readability-identifier-naming.ClassConstantCase: CamelCase  # static const
+      readability-identifier-naming.ClassConstantPrefix: k
+      readability-identifier-naming.ClassMemberCase: lower_case
+      readability-identifier-naming.ClassMemberSuffix: '_'
+      readability-identifier-naming.ConstantParameterCase: lower_case  # const な関数引数も通常の引数と同じ命名
+      readability-identifier-naming.ConstexprVariableCase: CamelCase
+      readability-identifier-naming.ConstexprVariablePrefix: k
+      readability-identifier-naming.EnumCase: CamelCase
+      readability-identifier-naming.EnumConstantCase: CamelCase
+      readability-identifier-naming.EnumConstantPrefix: k
+      readability-identifier-naming.FunctionCase: CamelCase
+      # C ABI 名と STL 互換のアクセサーは綴りを維持。
+      readability-identifier-naming.FunctionIgnoredRegexp: '^(main|HAL_.*|.*IRQHandler|.*_Handler|Error_Handler|__io_putchar|__io_getchar|_(write|read|sbrk|close|fstat|isatty|lseek|exit|kill|getpid|open|wait|unlink|times|stat|link|fork|execve)|begin|end|cbegin|cend|rbegin|rend|crbegin|crend|size|empty|data|front|back|at)$'
+      readability-identifier-naming.GlobalConstantCase: CamelCase
+      readability-identifier-naming.GlobalConstantPrefix: k
+      readability-identifier-naming.GlobalVariableCase: lower_case
+      readability-identifier-naming.IgnoreMainLikeFunctions: 'false'  # main のみ上で除外
+      readability-identifier-naming.LocalConstantCase: lower_case  # 実行時の const
+      readability-identifier-naming.LocalConstantIgnoredRegexp: '^k[A-Z][a-zA-Z0-9]*$'  # 定数名も許可
+      readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+      readability-identifier-naming.MemberCase: lower_case  # struct の public メンバー
+      readability-identifier-naming.NamespaceCase: lower_case
+      readability-identifier-naming.ParameterCase: lower_case
+      readability-identifier-naming.PrivateMemberCase: lower_case
+      readability-identifier-naming.PrivateMemberSuffix: '_'
+      readability-identifier-naming.ProtectedMemberCase: lower_case
+      readability-identifier-naming.ProtectedMemberSuffix: '_'
+      readability-identifier-naming.StaticConstantCase: CamelCase
+      readability-identifier-naming.StaticConstantPrefix: k
+      readability-identifier-naming.StructCase: CamelCase
+      readability-identifier-naming.TemplateParameterCase: CamelCase
+      readability-identifier-naming.TypeAliasCase: CamelCase
+      readability-identifier-naming.TypedefCase: CamelCase
+      readability-identifier-naming.UnionCase: CamelCase
+      readability-identifier-naming.ValueTemplateParameterCase: lower_case  # 非型引数
+      readability-identifier-naming.ValueTemplateParameterIgnoredRegexp: '^k[A-Z][a-zA-Z0-9]*$'  # 定数名も許可
+      readability-identifier-naming.VariableCase: lower_case
 
-# ASTベースの補完とホバー情報
-InlayHints:
-  Enabled: true        # ASTベースの補完とホバー情報を有効化
-  Designators: false   # デザイネータのヒントを表示
-  DeducedTypes: true   # 推論された型のヒントを表示
-  ParameterNames: true # 関数呼び出しの引数名のヒントを表示
+      # i/j 等のループ変数は許可し、通常の変数・引数は最低 2 文字。
+      readability-identifier-length.MinimumLoopCounterNameLength: '1'
+      readability-identifier-length.MinimumParameterNameLength: '2'
+      readability-identifier-length.MinimumVariableNameLength: '2'
+      # 整数・ポインターを if 条件に直接使うことは許可する。
+      readability-implicit-bool-conversion.AllowIntegerConditions: 'true'
+      readability-implicit-bool-conversion.AllowPointerConditions: 'true'
+      readability-simplify-boolean-expr.IgnoreMacros: 'true'  # 外部マクロの条件式は変更しない
 
-# ホバー表示設定
-Hover:
-  ShowAKA: true  # 型の別名を表示
+---
+# STM32/HAL に接する低層コードに限った例外。上位コードでは検出を維持。
+If:
+  PathMatch: '(include|src)/f4/.*\.(cc|cpp|cxx|h|hpp)$'
+Diagnostics:
+  ClangTidy:
+    Remove:
+      - bugprone-easily-swappable-parameters  # ピン番号など同型引数のある固定 API
+      - cppcoreguidelines-avoid-c-arrays  # HAL と C 配列を受け渡す
+      - cppcoreguidelines-avoid-non-const-global-variables  # ISR から共有する周辺機器状態
+      - cppcoreguidelines-pro-bounds-array-to-pointer-decay
+      - cppcoreguidelines-pro-bounds-constant-array-index
+      - cppcoreguidelines-pro-bounds-pointer-arithmetic  # DMA バッファを扱う
+      - cppcoreguidelines-pro-type-cstyle-cast  # HAL/CMSIS マクロ内部の C のキャスト
+      - cppcoreguidelines-pro-type-reinterpret-cast  # メモリマップドレジスター等
+      - modernize-avoid-c-arrays
+      - performance-no-int-to-ptr  # 固定番地のレジスター・リンカー定義アドレス
+      - readability-magic-numbers  # レジスター値・ビット位置・ハードウェア定数
+    CheckOptions:
+      # レジスター・HAL 初期化の手順は上位コードより長くなりやすい。
+      readability-function-size.LineThreshold: '150'
+      readability-function-size.ParameterThreshold: '8'
+      readability-function-size.StatementThreshold: '100'
 
-Documentation:
-  CommentFormat: Doxygen  # ドキュメントコメントのフォーマットをDoxygenスタイルに設定
+---
+# HAL を扱う private ヘッダー・実装では、対応する内部ヘッダーを直接使う。
+# IWYU の「公開時は nbed.h を使う」という指定が内部にも適用されるため、
+# 不足 include の提案だけを止める。コンパイラの未定義シンボル診断は維持する。
+If:
+  PathMatch: '(include|src)/f4/.*\.(cc|cpp|cxx|h|hpp)$'
+Diagnostics:
+  MissingIncludes: None
+
+---
+# newlib の入出力フックとリンカースクリプトが要求する名前だけを許可する。
+If:
+  PathMatch: 'src/f4/(system|uart)\.cc'
+Diagnostics:
+  ClangTidy:
+    CheckOptions:
+      bugprone-reserved-identifier.AllowedIdentifiers: '^(__io_putchar|__io_getchar|_Min_Stack_Size|_end|_estack)$'
+      readability-identifier-naming.FunctionIgnoredRegexp: '^(HAL_.*|.*IRQHandler|.*_Handler|Error_Handler|__io_putchar|__io_getchar|initialise_monitor_handles|_(write|read|sbrk|close|fstat|isatty|lseek|exit|kill|getpid|open|wait|unlink|times|stat|link|fork|execve))$'
+      readability-identifier-naming.VariableIgnoredRegexp: '^(_Min_Stack_Size|_end|_estack)$'
+
+---
+# HAL 設定は単独の公開ヘッダーではなく、HAL 本体に取り込まれる設定ファイル。
+If:
+  PathMatch: 'include/stm32f4xx_hal_conf\.h'
+CompileFlags:
+  Add: [-include, stm32f4xx_hal_def.h]  # 単独で開く場合も HAL の基本型を先に定義
+Diagnostics:
+  MissingIncludes: None
+  UnusedIncludes: None  # 機能を有効化するための include を削除候補にしない
+
+---
+# 公開の集約ヘッダーが意図的に提供する名前空間・初心者向けの別名。
+If:
+  PathMatch: 'include/nbed\.h'
+Diagnostics:
+  ClangTidy:
+    Remove: [google-build-using-namespace, google-global-names-in-headers]

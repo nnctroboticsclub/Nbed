@@ -1,6 +1,5 @@
-#include "nbed.h"
-
 #include "logger.h"
+#include "nbed.h"
 
 int main() {
   System::Initialize();

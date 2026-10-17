@@ -87,6 +87,9 @@ pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test
 
 ## VS Code と clangd
 
+整形・命名・組み込み向けの例外と、他プロジェクトへの移行手順は
+[C++ の整形・診断設定ガイド](code-style.md)にまとめています。
+
 このDB生成処理は他のPlatformIOプロジェクトにもコピーして使えます。
 通常の開発環境・ライブラリ開発環境での導入方法と対応範囲は
 [再利用スクリプトの説明](../scripts/README.md)にまとめています。

@@ -28,17 +28,11 @@ class Velocity {
     return velocity;
   }
 
-  constexpr void SetAsRadPS(RadPS rad_ps) {
-    rad_ps_ = rad_ps;
-  }
+  constexpr void SetAsRadPS(RadPS rad_ps) { rad_ps_ = rad_ps; }
 
-  constexpr void SetAsRpm(Rpm rpm) {
-    rad_ps_ = rpm * (2.0f * kPi) / 60.0f;
-  }
+  constexpr void SetAsRpm(Rpm rpm) { rad_ps_ = rpm * (2.0f * kPi) / 60.0f; }
 
-  [[nodiscard]] constexpr RadPS GetAsRadPS() const {
-    return rad_ps_;
-  }
+  [[nodiscard]] constexpr RadPS GetAsRadPS() const { return rad_ps_; }
 
   [[nodiscard]] constexpr Rpm GetAsRpm() const {
     return rad_ps_ * 60.0f / (2.0f * kPi);
@@ -62,17 +56,11 @@ class Current {
     return current;
   }
 
-  constexpr void SetAsAmpere(float amp) {
-    ampere_ = amp;
-  }
+  constexpr void SetAsAmpere(float amp) { ampere_ = amp; }
 
-  constexpr void SetAsMilliAmpere(float mA) {
-    ampere_ = mA / 1000.0f;
-  }
+  constexpr void SetAsMilliAmpere(float mA) { ampere_ = mA / 1000.0f; }
 
-  [[nodiscard]] constexpr float GetAsAmpere() const {
-    return ampere_;
-  }
+  [[nodiscard]] constexpr float GetAsAmpere() const { return ampere_; }
 
   [[nodiscard]] constexpr float GetAsMilliAmpere() const {
     return ampere_ * 1000.0f;
@@ -84,21 +72,13 @@ class Current {
 
 class Torque {
  public:
-  constexpr void SetAsNm(float nm) {
-    nm_ = nm;
-  }
+  constexpr void SetAsNm(float nm) { nm_ = nm; }
 
-  constexpr void SetAsMNm(float mNm) {
-    nm_ = mNm / 1000.0f;
-  }
+  constexpr void SetAsMNm(float mNm) { nm_ = mNm / 1000.0f; }
 
-  [[nodiscard]] constexpr float GetAsNm() const {
-    return nm_;
-  }
+  [[nodiscard]] constexpr float GetAsNm() const { return nm_; }
 
-  [[nodiscard]] constexpr float GetAsMNm() const {
-    return nm_ * 1000.0f;
-  }
+  [[nodiscard]] constexpr float GetAsMNm() const { return nm_ * 1000.0f; }
 
  private:
   float nm_ = 0.0f;  // トルク [N・m]
@@ -118,17 +98,13 @@ class Angle {
     return angle;
   }
 
-  constexpr void SetAsRadian(Rad radian) {
-    radian_ = radian;
-  }
+  constexpr void SetAsRadian(Rad radian) { radian_ = radian; }
 
   constexpr void SetAsDegree(Degree degree) {
     radian_ = degree * (kPi / 180.0f);
   }
 
-  [[nodiscard]] constexpr Rad GetAsRadian() const {
-    return radian_;
-  }
+  [[nodiscard]] constexpr Rad GetAsRadian() const { return radian_; }
 
   [[nodiscard]] constexpr Degree GetAsDegree() const {
     return radian_ * (180.0f / kPi);

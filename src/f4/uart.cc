@@ -4,12 +4,11 @@
 
 #include <limits>
 
+#include "f4/pin_mapper.h"
 #include "stm32f4xx_hal.h"  // IWYU pragma: keep
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
-
-#include "f4/pin_mapper.h"
 
 namespace nbed::f4 {
 namespace {
@@ -35,11 +34,11 @@ Uart*& Console() {
 
 void EnableUartClock(UartPeripheral peripheral) {
   if (peripheral == UartPeripheral::kUsart2) {
-    __HAL_RCC_USART2_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_USART2_CLK_ENABLE();
   } else if (peripheral == UartPeripheral::kUsart3) {
-    __HAL_RCC_USART3_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_USART3_CLK_ENABLE();
   } else {
-    __HAL_RCC_UART4_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_UART4_CLK_ENABLE();
   }
 }
 }  // namespace
@@ -51,8 +50,7 @@ Uart::Uart(UartPeripheral peripheral, interface::PinName rx,
       rx_(rx),
       tx_(tx),
       baud_rate_(baud_rate),
-      interrupt_priority_(interrupt_priority) {
-}
+      interrupt_priority_(interrupt_priority) {}
 
 Uart::~Uart() {
   if (!initialized_) {
@@ -80,12 +78,12 @@ bool Uart::Initialize() {
   }
   instance = this;
   EnableUartClock(peripheral_);
-  if (peripheral_ == UartPeripheral::kUsart2) {         // NOLINT
-    handle_.Instance = USART2;                          // NOLINT
-  } else if (peripheral_ == UartPeripheral::kUsart3) {  // NOLINT
-    handle_.Instance = USART3;                          // NOLINT
+  if (peripheral_ == UartPeripheral::kUsart2) {
+    handle_.Instance = USART2;
+  } else if (peripheral_ == UartPeripheral::kUsart3) {
+    handle_.Instance = USART3;
   } else {
-    handle_.Instance = UART4;  // NOLINT
+    handle_.Instance = UART4;
   }
   handle_.Init.BaudRate = baud_rate_;
   handle_.Init.WordLength = UART_WORDLENGTH_8B;
@@ -118,10 +116,13 @@ bool Uart::Initialize() {
 bool Uart::Send(interface::UartTxMessage message) {
   return initialized_ &&
          message.size() <= std::numeric_limits<uint16_t>::max() &&
-         HAL_UART_Transmit(&handle_,
-                           const_cast<uint8_t*>(message.data()),  // NOLINT
-                           static_cast<uint16_t>(message.size()),
-                           HAL_MAX_DELAY) == HAL_OK;
+         HAL_UART_Transmit(
+             &handle_,
+             // HAL transmit accepts a mutable pointer but does not modify
+             // the TX buffer.
+             // NOLINTNEXTLINE(cppcoreguidelines-pro-type-const-cast)
+             const_cast<uint8_t*>(message.data()),
+             static_cast<uint16_t>(message.size()), HAL_MAX_DELAY) == HAL_OK;
 }
 
 bool Uart::Receive(interface::UartRxMessage message) {
@@ -140,13 +141,9 @@ void Uart::SetRxCallback(const interface::UartRxCallback& callback) {
   rx_callback_ = callback;
 }
 
-UART_HandleTypeDef& Uart::GetHandle() {
-  return handle_;
-}
+UART_HandleTypeDef& Uart::GetHandle() { return handle_; }
 
-void Uart::SetConsole() {
-  Console() = this;
-}
+void Uart::SetConsole() { Console() = this; }
 
 void Uart::HandleInterrupt(UartPeripheral peripheral) {
   Uart* const uart = InstanceFor(peripheral);
@@ -160,11 +157,11 @@ void Uart::HandleRxComplete(UART_HandleTypeDef* handle) {
     return;
   }
   Uart* uart = nullptr;
-  if (handle->Instance == USART2) {  // NOLINT
+  if (handle->Instance == USART2) {
     uart = Usart2Instance();
-  } else if (handle->Instance == USART3) {  // NOLINT
+  } else if (handle->Instance == USART3) {
     uart = Usart3Instance();
-  } else if (handle->Instance == UART4) {  // NOLINT
+  } else if (handle->Instance == UART4) {
     uart = Uart4Instance();
   }
   if (uart != nullptr) {
@@ -216,23 +213,17 @@ Uart*& Uart::InstanceFor(UartPeripheral peripheral) {
 }
 
 extern "C" {
-void USART2_IRQHandler() {  // NOLINT
-  Uart::HandleInterrupt(UartPeripheral::kUsart2);
-}
+void USART2_IRQHandler() { Uart::HandleInterrupt(UartPeripheral::kUsart2); }
 
-void USART3_IRQHandler() {  // NOLINT
-  Uart::HandleInterrupt(UartPeripheral::kUsart3);
-}
+void USART3_IRQHandler() { Uart::HandleInterrupt(UartPeripheral::kUsart3); }
 
-void UART4_IRQHandler() {  // NOLINT
-  Uart::HandleInterrupt(UartPeripheral::kUart4);
-}
+void UART4_IRQHandler() { Uart::HandleInterrupt(UartPeripheral::kUart4); }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {  // NOLINT
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
   Uart::HandleRxComplete(huart);
 }
 
-int __io_putchar(int ch) {  // NOLINT
+int __io_putchar(int ch) {
   if (Console() == nullptr) {
     return ch;
   }
@@ -241,7 +232,7 @@ int __io_putchar(int ch) {  // NOLINT
   return ch;
 }
 
-int __io_getchar() {  // NOLINT
+int __io_getchar() {
   if (Console() == nullptr) {
     return -1;
   }

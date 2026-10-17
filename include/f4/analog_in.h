@@ -3,10 +3,9 @@
 
 #include <cstdint>
 
-#include "stm32f4xx_hal.h"  // IWYU pragma: export
-
 #include "interface/analog_in.h"
 #include "interface/pin_names.h"
+#include "stm32f4xx_hal.h"  // IWYU pragma: export
 
 namespace nbed::f4 {
 

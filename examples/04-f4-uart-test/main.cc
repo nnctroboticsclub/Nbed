@@ -1,6 +1,5 @@
-#include "nbed.h"
-
 #include "logger.h"
+#include "nbed.h"
 
 // platformio.ini にて NBED_NO_DEFAULT_SERIAL を定義しているため、
 // System::Initialize() 内でのデフォルト UART 初期化は行われない。

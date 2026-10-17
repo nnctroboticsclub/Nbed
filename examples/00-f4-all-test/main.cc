@@ -1,9 +1,8 @@
 #include <array>
 #include <cstdint>
 
-#include "nbed.h"
-
 #include "logger.h"
+#include "nbed.h"
 
 bool GpioTest(DigitalOut& led, DigitalIn& button) {
   const bool initialized = led.Initialize() && button.Initialize();
@@ -100,7 +99,7 @@ bool TimerTest(Timer& timer) {
 // platformio.ini にて NBED_NO_DEFAULT_SERIAL を定義しているため、
 // System::Initialize() 内でのデフォルト UART 初期化は行われない。
 
-int main() {  // NOLINT
+int main() {
   System::Initialize();
 
   Uart uart(kUsart2, kPA3, kPA2, 921600);

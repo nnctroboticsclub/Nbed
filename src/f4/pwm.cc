@@ -6,12 +6,11 @@
 #include <cmath>
 #include <optional>
 
+#include "f4/pin_mapper.h"
+#include "f4/timer_reservation.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
-
-#include "f4/pin_mapper.h"
-#include "f4/timer_reservation.h"
 
 namespace nbed::f4 {
 
@@ -49,11 +48,11 @@ Pwm::TimerState& StateOf(PwmTimer timer) {
 TIM_TypeDef* InstanceOf(PwmTimer timer) {
   switch (timer) {
     case PwmTimer::kTim1:
-      return TIM1;  // NOLINT
+      return TIM1;
     case PwmTimer::kTim2:
-      return TIM2;  // NOLINT
+      return TIM2;
     default:
-      return TIM3;  // NOLINT
+      return TIM3;
   }
 }
 
@@ -79,13 +78,13 @@ constexpr uint32_t MaxPeriod(PwmTimer timer) {
 void EnableTimerClock(PwmTimer timer) {
   switch (timer) {
     case PwmTimer::kTim1:
-      __HAL_RCC_TIM1_CLK_ENABLE();  // NOLINT
+      __HAL_RCC_TIM1_CLK_ENABLE();
       break;
     case PwmTimer::kTim2:
-      __HAL_RCC_TIM2_CLK_ENABLE();  // NOLINT
+      __HAL_RCC_TIM2_CLK_ENABLE();
       break;
     case PwmTimer::kTim3:
-      __HAL_RCC_TIM3_CLK_ENABLE();  // NOLINT
+      __HAL_RCC_TIM3_CLK_ENABLE();
       break;
   }
 }
@@ -121,7 +120,7 @@ void SetCompareTicks(Pwm::TimerState& state, PwmTimer timer, uint32_t channel,
                      uint64_t ticks) {
   const uint64_t upper = std::min<uint64_t>(
       static_cast<uint64_t>(state.handle.Init.Period) + 1ULL, MaxPeriod(timer));
-  __HAL_TIM_SET_COMPARE(&state.handle, channel,  // NOLINT
+  __HAL_TIM_SET_COMPARE(&state.handle, channel,
                         static_cast<uint32_t>(std::min(ticks, upper)));
 }
 
@@ -139,14 +138,14 @@ void ReleaseTimerIfUnused(Pwm::TimerState& state) {
 
 Pwm::Pwm(PwmTimer timer, PwmChannel channel, interface::PinName pin,
          uint32_t frequency_hz)
-    : timer_(timer), channel_(channel), pin_(pin), frequency_hz_(frequency_hz) {
-}
+    : timer_(timer),
+      channel_(channel),
+      pin_(pin),
+      frequency_hz_(frequency_hz) {}
 
-Pwm::~Pwm() {
-  Stop();
-}
+Pwm::~Pwm() { Stop(); }
 
-bool Pwm::Initialize() {  // NOLINT
+bool Pwm::Initialize() {
   if (initialized_) {
     return true;
   }
@@ -275,7 +274,7 @@ bool Pwm::SetFrequencyHz(uint32_t frequency_hz) {
   frequency_hz_ = frequency_hz;
 
   __HAL_TIM_SET_PRESCALER(&state.handle, timing->prescaler);
-  __HAL_TIM_SET_AUTORELOAD(&state.handle, timing->period);  // NOLINT
+  __HAL_TIM_SET_AUTORELOAD(&state.handle, timing->period);
   const uint64_t new_range = static_cast<uint64_t>(timing->period) + 1ULL;
   SetCompareTicks(state, timer_, HalChannel(),
                   old_compare * new_range / old_range);
@@ -298,9 +297,7 @@ bool Pwm::SetDutyCycle(float duty_cycle) {
   return true;
 }
 
-void Pwm::SendDataDma(std::span<const uint32_t> data) {
-  (void)data;
-}
+void Pwm::SendDataDma(std::span<const uint32_t> data) { (void)data; }
 
 uint32_t Pwm::GetFrequencyHz() const {
   return initialized_ ? State().frequency_hz : frequency_hz_;
@@ -322,9 +319,7 @@ void Pwm::Stop() {
   initialized_ = false;
 }
 
-Pwm::TimerState& Pwm::State() const {
-  return StateOf(timer_);
-}
+Pwm::TimerState& Pwm::State() const { return StateOf(timer_); }
 
 uint32_t Pwm::HalChannel() const {
   switch (channel_) {
@@ -339,7 +334,9 @@ uint32_t Pwm::HalChannel() const {
   }
 }
 
-bool Pwm::IsValidPin() const {  // NOLINT
+// Keep the complete timer/channel/pin matrix together for review.
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
+bool Pwm::IsValidPin() const {
   if (!PinMapper::IsValidPin(pin_)) {
     return false;
   }

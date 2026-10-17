@@ -18,9 +18,7 @@ class DigitalOut {
   virtual void Write(bool value) = 0;
   [[nodiscard]] virtual bool Read() const = 0;
 
-  [[nodiscard]] explicit operator bool() const {
-    return Read();
-  }
+  [[nodiscard]] explicit operator bool() const { return Read(); }
 
   virtual DigitalOut& operator=(bool value) {
     Write(value);

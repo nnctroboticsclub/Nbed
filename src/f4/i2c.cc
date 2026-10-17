@@ -2,12 +2,11 @@
 
 #include "f4/i2c.h"
 
+#include "f4/pin_mapper.h"
 #include "stm32f4xx_hal.h"  // IWYU pragma: keep
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
-
-#include "f4/pin_mapper.h"
 
 namespace nbed::f4 {
 namespace {
@@ -38,11 +37,11 @@ I2c*& InstanceFor(I2cPeripheral peripheral) {
 
 void EnableI2cClock(I2cPeripheral peripheral) {
   if (peripheral == I2cPeripheral::kI2c1) {
-    __HAL_RCC_I2C1_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_I2C1_CLK_ENABLE();
   } else if (peripheral == I2cPeripheral::kI2c2) {
-    __HAL_RCC_I2C2_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_I2C2_CLK_ENABLE();
   } else {
-    __HAL_RCC_I2C3_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_I2C3_CLK_ENABLE();
   }
 }
 }  // namespace
@@ -52,8 +51,7 @@ I2c::I2c(I2cPeripheral peripheral, interface::PinName scl,
     : peripheral_(peripheral),
       scl_(scl),
       sda_(sda),
-      frequency_hz_(frequency_hz) {
-}
+      frequency_hz_(frequency_hz) {}
 
 I2c::~I2c() {
   if (!initialized_) {
@@ -77,12 +75,12 @@ bool I2c::Initialize() {
   }
   instance = this;
   EnableI2cClock(peripheral_);
-  if (peripheral_ == I2cPeripheral::kI2c1) {         // NOLINT
-    handle_.Instance = I2C1;                         // NOLINT
-  } else if (peripheral_ == I2cPeripheral::kI2c2) {  // NOLINT
-    handle_.Instance = I2C2;                         // NOLINT
+  if (peripheral_ == I2cPeripheral::kI2c1) {
+    handle_.Instance = I2C1;
+  } else if (peripheral_ == I2cPeripheral::kI2c2) {
+    handle_.Instance = I2C2;
   } else {
-    handle_.Instance = I2C3;  // NOLINT
+    handle_.Instance = I2C3;
   }
   handle_.Init.ClockSpeed = frequency_hz_;
   handle_.Init.DutyCycle = I2C_DUTYCYCLE_2;

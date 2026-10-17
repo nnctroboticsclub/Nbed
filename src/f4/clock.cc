@@ -7,11 +7,10 @@
 #include <limits>
 #include <optional>
 
+#include "f4/time.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_pwr_ex.h"
 #include "stm32f4xx_hal_rcc.h"
-
-#include "f4/time.h"
 
 namespace nbed::f4 {
 namespace {
@@ -70,10 +69,9 @@ bool IsValidConfiguration(const Clock::Configuration& configuration) {
   constexpr uint64_t kMaximumApb1ClockHz = 45'000'000ULL;
   constexpr uint64_t kMaximumApb2ClockHz = 90'000'000ULL;
 
-  if (!IS_RCC_PLLM_VALUE(configuration.pll_m) ||  // NOLINT
-      configuration.pll_n < 50U || configuration.pll_n > 432U ||
-      !IS_RCC_PLLP_VALUE(configuration.pll_p) ||  // NOLINT
-      !IS_RCC_PLLQ_VALUE(configuration.pll_q)) {  // NOLINT
+  if (!IS_RCC_PLLM_VALUE(configuration.pll_m) || configuration.pll_n < 50U ||
+      configuration.pll_n > 432U || !IS_RCC_PLLP_VALUE(configuration.pll_p) ||
+      !IS_RCC_PLLQ_VALUE(configuration.pll_q)) {
     return false;
   }
   const auto ahb_divider = AhbDividerFactor(configuration.ahb_divider);
@@ -106,7 +104,9 @@ bool IsValidConfiguration(const Clock::Configuration& configuration) {
 
   const uint64_t system_denominator = pll_m * configuration.pll_p;
   // clang-format off
-  return !(vco_numerator > system_denominator * kMaximumSystemClockHz || // NOLINT
+  // Keep all hardware clock limits in the same upper-bound form.
+  // NOLINTNEXTLINE(readability-simplify-boolean-expr)
+  return !(vco_numerator > system_denominator * kMaximumSystemClockHz ||
            vco_numerator > system_denominator * *ahb_divider * kMaximumSystemClockHz ||
            vco_numerator > system_denominator * *ahb_divider * *apb1_divider * kMaximumApb1ClockHz ||
            vco_numerator > system_denominator * *ahb_divider * *apb2_divider * kMaximumApb2ClockHz);
@@ -115,18 +115,16 @@ bool IsValidConfiguration(const Clock::Configuration& configuration) {
 
 }  // namespace
 
-void Clock::Initialize() {
-  (void)Initialize(Configuration{});
-}
+void Clock::Initialize() { (void)Initialize(Configuration{}); }
 
-bool Clock::Initialize(const Configuration& configuration) {  // NOLINT
+bool Clock::Initialize(const Configuration& configuration) {
   if (!IsValidConfiguration(configuration)) {
     return false;
   }
 
   RCC_OscInitTypeDef osc{};
   RCC_ClkInitTypeDef clk{};
-  __HAL_RCC_PWR_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_PWR_CLK_ENABLE();
   osc.OscillatorType = configuration.oscillator_source == OscillatorSource::kHse
                            ? RCC_OSCILLATORTYPE_HSE
                            : RCC_OSCILLATORTYPE_HSI;
@@ -178,7 +176,7 @@ bool Clock::Initialize(const Configuration& configuration) {  // NOLINT
   } else if (system_clock_hz > 120'000'000U) {
     voltage_scale = PWR_REGULATOR_VOLTAGE_SCALE2;
   }
-  __HAL_PWR_VOLTAGESCALING_CONFIG(voltage_scale);  // NOLINT
+  __HAL_PWR_VOLTAGESCALING_CONFIG(voltage_scale);
 
   if (HAL_RCC_OscConfig(&osc) != HAL_OK) {
     return false;
@@ -192,9 +190,7 @@ bool Clock::Initialize(const Configuration& configuration) {  // NOLINT
   return HAL_RCC_ClockConfig(&clk, flash_latency) == HAL_OK;
 }
 
-void Clock::Sleep(uint32_t milliseconds) {
-  HAL_Delay(milliseconds);
-}
+void Clock::Sleep(uint32_t milliseconds) { HAL_Delay(milliseconds); }
 
 void Clock::Sleep(std::chrono::milliseconds milliseconds) {
   if (milliseconds <= std::chrono::milliseconds::zero()) {
@@ -212,21 +208,13 @@ void Clock::Sleep(std::chrono::milliseconds milliseconds) {
   HAL_Delay(static_cast<uint32_t>(remaining));
 }
 
-uint32_t Clock::SystemClockHz() {
-  return HAL_RCC_GetSysClockFreq();
-}
+uint32_t Clock::SystemClockHz() { return HAL_RCC_GetSysClockFreq(); }
 
-uint32_t Clock::HclkHz() {
-  return HAL_RCC_GetHCLKFreq();
-}
+uint32_t Clock::HclkHz() { return HAL_RCC_GetHCLKFreq(); }
 
-uint32_t Clock::Pclk1Hz() {
-  return HAL_RCC_GetPCLK1Freq();
-}
+uint32_t Clock::Pclk1Hz() { return HAL_RCC_GetPCLK1Freq(); }
 
-uint32_t Clock::Pclk2Hz() {
-  return HAL_RCC_GetPCLK2Freq();
-}
+uint32_t Clock::Pclk2Hz() { return HAL_RCC_GetPCLK2Freq(); }
 
 constinit Clock ClockManager::clock_{};
 
@@ -238,13 +226,11 @@ bool ClockManager::Initialize(const Clock::Configuration& configuration) {
   return Clock::Initialize(configuration);
 }
 
-Clock& ClockManager::GetClock() {
-  return clock_;
-}
+Clock& ClockManager::GetClock() { return clock_; }
 
 extern "C" {
 
-void SysTick_Handler(void) {  // NOLINT
+void SysTick_Handler(void) {
   HAL_IncTick();
   Time::OnSysTick();
 }

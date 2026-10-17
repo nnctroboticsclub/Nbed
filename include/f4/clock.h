@@ -4,10 +4,9 @@
 #include <chrono>
 #include <cstdint>
 
+#include "interface/clock.h"
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_rcc.h"
-
-#include "interface/clock.h"
 
 namespace nbed::f4 {
 

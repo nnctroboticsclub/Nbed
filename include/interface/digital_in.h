@@ -15,17 +15,11 @@ class DigitalIn {
 
   [[nodiscard]] virtual bool Read() const = 0;
 
-  [[nodiscard]] explicit operator bool() const {
-    return Read();
-  }
+  [[nodiscard]] explicit operator bool() const { return Read(); }
 
-  [[nodiscard]] bool operator==(bool value) const {
-    return Read() == value;
-  }
+  [[nodiscard]] bool operator==(bool value) const { return Read() == value; }
 
-  [[nodiscard]] bool operator!=(bool value) const {
-    return Read() != value;
-  }
+  [[nodiscard]] bool operator!=(bool value) const { return Read() != value; }
 
   friend bool operator==(bool value, const DigitalIn& input) {
     return input == value;

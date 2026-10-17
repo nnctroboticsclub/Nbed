@@ -1,6 +1,5 @@
-#include "nbed.h"
-
 #include "logger.h"
+#include "nbed.h"
 
 void OnRxMessage(const CanMessage& message) {
   Logger::Value("can",

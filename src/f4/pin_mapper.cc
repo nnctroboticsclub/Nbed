@@ -38,15 +38,15 @@ GPIO_TypeDef* PinMapper::GetGpioPort(interface::PinName pin_name) {
   auto port_index = static_cast<uint8_t>(pin_name) >> 4;
   switch (port_index) {
     case 0:
-      return GPIOA;  // NOLINT
+      return GPIOA;
     case 1:
-      return GPIOB;  // NOLINT
+      return GPIOB;
     case 2:
-      return GPIOC;  // NOLINT
+      return GPIOC;
     case 3:
-      return GPIOD;  // NOLINT
+      return GPIOD;
     case 7:
-      return GPIOH;  // NOLINT
+      return GPIOH;
     default:
       return nullptr;
   }
@@ -61,16 +61,16 @@ uint16_t PinMapper::GetGpioPin(interface::PinName pin_name) {
 }
 
 void PinMapper::EnableGpioClock(GPIO_TypeDef* port) {
-  if (port == GPIOA) {             // NOLINT
-    __HAL_RCC_GPIOA_CLK_ENABLE();  // NOLINT
-  } else if (port == GPIOB) {      // NOLINT
-    __HAL_RCC_GPIOB_CLK_ENABLE();  // NOLINT
-  } else if (port == GPIOC) {      // NOLINT
-    __HAL_RCC_GPIOC_CLK_ENABLE();  // NOLINT
-  } else if (port == GPIOD) {      // NOLINT
-    __HAL_RCC_GPIOD_CLK_ENABLE();  // NOLINT
-  } else if (port == GPIOH) {      // NOLINT
-    __HAL_RCC_GPIOH_CLK_ENABLE();  // NOLINT
+  if (port == GPIOA) {
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+  } else if (port == GPIOB) {
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+  } else if (port == GPIOC) {
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+  } else if (port == GPIOD) {
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+  } else if (port == GPIOH) {
+    __HAL_RCC_GPIOH_CLK_ENABLE();
   }
 }
 

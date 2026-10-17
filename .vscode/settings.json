@@ -16,7 +16,11 @@
     "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
     "editor.formatOnSave": true
   },
-  "files.associations": { "*.h": "cpp" },
+  "files.associations": {
+    "*.h": "cpp",
+    ".clangd": "yaml",
+    ".clang-format": "yaml"
+  },
   "C_Cpp.intelliSenseEngine": "disabled",
 
   // vscode-clangd が userHome を解決するためWindows・macOS・Linuxで共通。

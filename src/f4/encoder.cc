@@ -2,22 +2,21 @@
 
 #include "f4/encoder.h"
 
+#include "f4/pin_mapper.h"
+#include "f4/timer_reservation.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
-
-#include "f4/pin_mapper.h"
-#include "f4/timer_reservation.h"
 
 namespace nbed::f4 {
 namespace {
 void EnableTimerClock(EncoderTimer timer) {
   if (timer == EncoderTimer::kTim1) {
-    __HAL_RCC_TIM1_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_TIM1_CLK_ENABLE();
   } else if (timer == EncoderTimer::kTim2) {
-    __HAL_RCC_TIM2_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_TIM2_CLK_ENABLE();
   } else {
-    __HAL_RCC_TIM3_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_TIM3_CLK_ENABLE();
   }
 }
 }  // namespace
@@ -27,8 +26,7 @@ Encoder::Encoder(EncoderTimer timer, interface::PinName channel_a,
     : timer_(timer),
       channel_a_(channel_a),
       channel_b_(channel_b),
-      counts_per_revolution_(counts_per_revolution) {
-}
+      counts_per_revolution_(counts_per_revolution) {}
 
 Encoder::~Encoder() {
   if (!initialized_) {
@@ -40,7 +38,7 @@ Encoder::~Encoder() {
   initialized_ = false;
 }
 
-bool Encoder::Initialize() {  // NOLINT
+bool Encoder::Initialize() {
   if (initialized_) {
     return true;
   }
@@ -51,12 +49,12 @@ bool Encoder::Initialize() {  // NOLINT
     return false;
   }
   EnableTimerClock(timer_);
-  if (timer_ == EncoderTimer::kTim1) {         // NOLINT
-    handle_.Instance = TIM1;                   // NOLINT
-  } else if (timer_ == EncoderTimer::kTim2) {  // NOLINT
-    handle_.Instance = TIM2;                   // NOLINT
+  if (timer_ == EncoderTimer::kTim1) {
+    handle_.Instance = TIM1;
+  } else if (timer_ == EncoderTimer::kTim2) {
+    handle_.Instance = TIM2;
   } else {
-    handle_.Instance = TIM3;  // NOLINT
+    handle_.Instance = TIM3;
   }
   handle_.Init.Prescaler = 0;
   handle_.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -84,7 +82,9 @@ bool Encoder::Initialize() {  // NOLINT
   gpio.Mode = GPIO_MODE_AF_PP;
   gpio.Pull = GPIO_NOPULL;
   gpio.Speed = GPIO_SPEED_FREQ_LOW;
-  if (timer_ == EncoderTimer::kTim1) {  // NOLINT
+  // TIM1 and TIM2 use the same encoding for different alternate functions.
+  // NOLINTNEXTLINE(bugprone-branch-clone)
+  if (timer_ == EncoderTimer::kTim1) {
     gpio.Alternate = GPIO_AF1_TIM1;
   } else if (timer_ == EncoderTimer::kTim2) {
     gpio.Alternate = GPIO_AF1_TIM2;

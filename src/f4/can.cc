@@ -2,13 +2,12 @@
 
 #include "f4/can.h"
 
+#include "f4/pin_mapper.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal_cortex.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
-
-#include "f4/pin_mapper.h"
 
 namespace nbed::f4 {
 namespace {
@@ -55,8 +54,7 @@ void DisableGpioClock(GPIO_TypeDef* port) {
 
 }  // namespace
 
-Can::Can(CanConfig config) : config_(config) {
-}
+Can::Can(CanConfig config) : config_(config) {}
 
 Can::Can(CanPeripheral peripheral, interface::PinName rx, interface::PinName tx,
          uint32_t bitrate)
@@ -65,12 +63,9 @@ Can::Can(CanPeripheral peripheral, interface::PinName rx, interface::PinName tx,
           .rx = rx,
           .tx = tx,
           .bitrate = bitrate,
-      }) {
-}
+      }) {}
 
-Can::~Can() {
-  Stop();
-}
+Can::~Can() { Stop(); }
 
 bool Can::Initialize() {
   if (initialized_) {
@@ -80,8 +75,7 @@ bool Can::Initialize() {
     return false;
   }
 
-  handle_.Instance =
-      config_.peripheral == CanPeripheral::kCan1 ? CAN1 : CAN2;  // NOLINT
+  handle_.Instance = config_.peripheral == CanPeripheral::kCan1 ? CAN1 : CAN2;
   handle_.Init.Mode = ToHalMode(config_.mode);
   handle_.Init.SyncJumpWidth = CAN_SJW_1TQ;
   handle_.Init.TimeTriggeredMode = DISABLE;
@@ -267,9 +261,7 @@ uint8_t Can::GetReceiveErrorCount() const {
                               CAN_ESR_REC_Pos);
 }
 
-CAN_HandleTypeDef& Can::GetHandle() {
-  return handle_;
-}
+CAN_HandleTypeDef& Can::GetHandle() { return handle_; }
 
 void Can::HandleInterrupt(CanPeripheral peripheral) {
   Can* const can = InstanceFor(peripheral);
@@ -294,11 +286,11 @@ void Can::ConfigureMsp(CAN_HandleTypeDef* handle) {
     return;
   }
   if (can->config_.peripheral == CanPeripheral::kCan1) {
-    __HAL_RCC_CAN1_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_CAN1_CLK_ENABLE();
   } else {
     // CAN2 shares the bxCAN filter block and its clock dependency with CAN1.
-    __HAL_RCC_CAN1_CLK_ENABLE();  // NOLINT
-    __HAL_RCC_CAN2_CLK_ENABLE();  // NOLINT
+    __HAL_RCC_CAN1_CLK_ENABLE();
+    __HAL_RCC_CAN2_CLK_ENABLE();
   }
   GPIO_InitTypeDef gpio{};
   gpio.Mode = GPIO_MODE_AF_PP;
@@ -333,9 +325,9 @@ void Can::DeconfigureMsp(CAN_HandleTypeDef* handle) {
                             : CAN2_RX0_IRQn;
   HAL_NVIC_DisableIRQ(irq);
   if (can->config_.peripheral == CanPeripheral::kCan2) {
-    __HAL_RCC_CAN2_CLK_DISABLE();  // NOLINT
+    __HAL_RCC_CAN2_CLK_DISABLE();
   } else if (Can2Instance() == nullptr || !Can2Instance()->initialized_) {
-    __HAL_RCC_CAN1_CLK_DISABLE();  // NOLINT
+    __HAL_RCC_CAN1_CLK_DISABLE();
   }
 }
 
@@ -421,10 +413,10 @@ Can* Can::FromHandle(CAN_HandleTypeDef* handle) {
   if (handle == nullptr) {
     return nullptr;
   }
-  if (handle->Instance == CAN1) {  // NOLINT
+  if (handle->Instance == CAN1) {
     return Can1Instance();
   }
-  if (handle->Instance == CAN2) {  // NOLINT
+  if (handle->Instance == CAN2) {
     return Can2Instance();
   }
   return nullptr;
@@ -432,23 +424,15 @@ Can* Can::FromHandle(CAN_HandleTypeDef* handle) {
 
 extern "C" {
 
-void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan) {  // NOLINT
-  Can::ConfigureMsp(hcan);
-}
+void HAL_CAN_MspInit(CAN_HandleTypeDef* hcan) { Can::ConfigureMsp(hcan); }
 
-void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan) {  // NOLINT
-  Can::DeconfigureMsp(hcan);
-}
+void HAL_CAN_MspDeInit(CAN_HandleTypeDef* hcan) { Can::DeconfigureMsp(hcan); }
 
-void CAN1_RX0_IRQHandler() {  // NOLINT
-  Can::HandleInterrupt(CanPeripheral::kCan1);
-}
+void CAN1_RX0_IRQHandler() { Can::HandleInterrupt(CanPeripheral::kCan1); }
 
-void CAN2_RX0_IRQHandler() {  // NOLINT
-  Can::HandleInterrupt(CanPeripheral::kCan2);
-}
+void CAN2_RX0_IRQHandler() { Can::HandleInterrupt(CanPeripheral::kCan2); }
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {  // NOLINT
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan) {
   Can::HandleRxPending(hcan);
 }
 

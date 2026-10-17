@@ -3,11 +3,10 @@
 
 #include <cstdint>
 
-#include "stm32f4xx_hal.h"  // IWYU pragma: export
-#include "stm32f4xx_hal_tim.h"
-
 #include "interface/encoder.h"
 #include "interface/pin_names.h"
+#include "stm32f4xx_hal.h"  // IWYU pragma: export
+#include "stm32f4xx_hal_tim.h"
 
 namespace nbed::f4 {
 

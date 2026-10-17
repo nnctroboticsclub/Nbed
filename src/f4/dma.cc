@@ -31,74 +31,60 @@ constinit DMA_HandleTypeDef Dma6::hdma_{};
 constinit DMA_HandleTypeDef Dma7::hdma_{};
 
 void Dma1::Initialize() {
-  __HAL_RCC_DMA2_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_DMA2_CLK_ENABLE();
   HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 }
 
-DMA_HandleTypeDef& Dma1::GetHandle() {
-  return hdma_;
-}
+DMA_HandleTypeDef& Dma1::GetHandle() { return hdma_; }
 
 void Dma2::Initialize() {
-  __HAL_RCC_DMA2_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_DMA2_CLK_ENABLE();
   HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
 }
 
-DMA_HandleTypeDef& Dma2::GetHandle() {
-  return hdma_;
-}
+DMA_HandleTypeDef& Dma2::GetHandle() { return hdma_; }
 
 void Dma3::Initialize() {
-  __HAL_RCC_DMA2_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_DMA2_CLK_ENABLE();
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
 }
 
-DMA_HandleTypeDef& Dma3::GetHandle() {
-  return hdma_;
-}
+DMA_HandleTypeDef& Dma3::GetHandle() { return hdma_; }
 
 void Dma4::Initialize() {
-  __HAL_RCC_DMA2_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_DMA2_CLK_ENABLE();
   HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
 }
 
-DMA_HandleTypeDef& Dma4::GetHandle() {
-  return hdma_;
-}
+DMA_HandleTypeDef& Dma4::GetHandle() { return hdma_; }
 
 void Dma5::Initialize() {
-  __HAL_RCC_DMA1_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_DMA1_CLK_ENABLE();
   HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
 }
 
-DMA_HandleTypeDef& Dma5::GetHandle() {
-  return hdma_;
-}
+DMA_HandleTypeDef& Dma5::GetHandle() { return hdma_; }
 
 void Dma6::Initialize() {
-  __HAL_RCC_DMA1_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_DMA1_CLK_ENABLE();
   HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 }
 
-DMA_HandleTypeDef& Dma6::GetHandle() {
-  return hdma_;
-}
+DMA_HandleTypeDef& Dma6::GetHandle() { return hdma_; }
 
 void Dma7::Initialize() {
-  __HAL_RCC_DMA1_CLK_ENABLE();  // NOLINT
+  __HAL_RCC_DMA1_CLK_ENABLE();
   HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
 }
 
-DMA_HandleTypeDef& Dma7::GetHandle() {
-  return hdma_;
-}
+DMA_HandleTypeDef& Dma7::GetHandle() { return hdma_; }
 
 constinit Dma1 DmaManager::dma1_{};
 constinit Dma2 DmaManager::dma2_{};
@@ -118,63 +104,35 @@ void DmaManager::Initialize() {
   dma7_.Initialize();
 }
 
-Dma1& DmaManager::GetDma1() {
-  return dma1_;
-}
+Dma1& DmaManager::GetDma1() { return dma1_; }
 
-Dma2& DmaManager::GetDma2() {
-  return dma2_;
-}
+Dma2& DmaManager::GetDma2() { return dma2_; }
 
-Dma3& DmaManager::GetDma3() {
-  return dma3_;
-}
+Dma3& DmaManager::GetDma3() { return dma3_; }
 
-Dma4& DmaManager::GetDma4() {
-  return dma4_;
-}
+Dma4& DmaManager::GetDma4() { return dma4_; }
 
-Dma5& DmaManager::GetDma5() {
-  return dma5_;
-}
+Dma5& DmaManager::GetDma5() { return dma5_; }
 
-Dma6& DmaManager::GetDma6() {
-  return dma6_;
-}
+Dma6& DmaManager::GetDma6() { return dma6_; }
 
-Dma7& DmaManager::GetDma7() {
-  return dma7_;
-}
+Dma7& DmaManager::GetDma7() { return dma7_; }
 
 extern "C" {
 
-void DMA2_Stream1_IRQHandler() {       // NOLINT
-  HandleInterrupt(Dma1::GetHandle());  // NOLINT
-}
+void DMA2_Stream1_IRQHandler() { HandleInterrupt(Dma1::GetHandle()); }
 
-void DMA2_Stream2_IRQHandler() {       // NOLINT
-  HandleInterrupt(Dma2::GetHandle());  // NOLINT
-}
+void DMA2_Stream2_IRQHandler() { HandleInterrupt(Dma2::GetHandle()); }
 
-void DMA2_Stream6_IRQHandler() {       // NOLINT
-  HandleInterrupt(Dma3::GetHandle());  // NOLINT
-}
+void DMA2_Stream6_IRQHandler() { HandleInterrupt(Dma3::GetHandle()); }
 
-void DMA2_Stream4_IRQHandler() {       // NOLINT
-  HandleInterrupt(Dma4::GetHandle());  // NOLINT
-}
+void DMA2_Stream4_IRQHandler() { HandleInterrupt(Dma4::GetHandle()); }
 
-void DMA1_Stream5_IRQHandler() {       // NOLINT
-  HandleInterrupt(Dma5::GetHandle());  // NOLINT
-}
+void DMA1_Stream5_IRQHandler() { HandleInterrupt(Dma5::GetHandle()); }
 
-void DMA1_Stream6_IRQHandler() {       // NOLINT
-  HandleInterrupt(Dma6::GetHandle());  // NOLINT
-}
+void DMA1_Stream6_IRQHandler() { HandleInterrupt(Dma6::GetHandle()); }
 
-void DMA1_Stream1_IRQHandler() {       // NOLINT
-  HandleInterrupt(Dma7::GetHandle());  // NOLINT
-}
+void DMA1_Stream1_IRQHandler() { HandleInterrupt(Dma7::GetHandle()); }
 
 }  // extern "C"
 

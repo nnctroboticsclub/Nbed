@@ -1,8 +1,7 @@
 #pragma once
 
-#include "stm32f4xx_hal.h"  // IWYU pragma: export
-
 #include "interface/pin_names.h"
+#include "stm32f4xx_hal.h"  // IWYU pragma: export
 
 namespace nbed::f4 {
 
