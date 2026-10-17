@@ -9,7 +9,7 @@
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 ADC_HandleTypeDef& Adc1() {
   static ADC_HandleTypeDef handle{};
@@ -138,6 +138,6 @@ uint32_t AnalogIn::Channel() const {
   }
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

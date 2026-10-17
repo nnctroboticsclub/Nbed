@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class Error {
  public:
@@ -14,4 +14,4 @@ class Error {
   virtual void ErrorHandler() = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

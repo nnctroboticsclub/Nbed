@@ -2,7 +2,7 @@
 
 #include "digital_in.h"
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class DigitalOut {
  public:
@@ -32,4 +32,4 @@ class DigitalOut {
   }
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

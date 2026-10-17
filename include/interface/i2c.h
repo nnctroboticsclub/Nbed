@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 struct I2CMessage {
   uint16_t address;
@@ -25,4 +25,4 @@ class I2C {
   virtual bool Receive(I2CMessage& message) = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

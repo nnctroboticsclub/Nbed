@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class AnalogIn {
  public:
@@ -17,4 +17,4 @@ class AnalogIn {
   [[nodiscard]] virtual float ReadVoltage() = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

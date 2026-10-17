@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_can.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 enum class CanPeripheral : uint8_t { kCan1, kCan2 };
 enum class CanMode : uint8_t { kNormal, kLoopback, kSilent, kSilentLoopback };
@@ -88,4 +88,4 @@ class Can final : public interface::Can {
   bool started_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

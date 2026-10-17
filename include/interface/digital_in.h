@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class DigitalIn {
  public:
@@ -30,4 +30,4 @@ class DigitalIn {
   }
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

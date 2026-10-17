@@ -7,7 +7,7 @@
 #include "interface/digital_out.h"
 #include "interface/pin_names.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 enum class GpioPull : uint8_t { kNone, kUp, kDown };
 
@@ -48,4 +48,4 @@ class DigitalIn final : public interface::DigitalIn {
   bool initialized_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

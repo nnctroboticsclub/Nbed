@@ -1,6 +1,6 @@
 #pragma once
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class Dma {
  public:
@@ -14,4 +14,4 @@ class Dma {
   virtual void Initialize() = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

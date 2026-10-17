@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 #ifdef STM32F303x8
 enum class PinName : std::uint8_t {
@@ -250,4 +250,4 @@ enum class PinName : std::uint8_t {
 };
 #endif
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

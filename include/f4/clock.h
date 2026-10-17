@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 class Clock final : public interface::Clock {
  public:
@@ -63,4 +63,4 @@ class ClockManager {
   static constinit Clock clock_;
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

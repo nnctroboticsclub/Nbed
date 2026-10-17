@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 I2c*& I2c1Instance() {
   static I2c* instance = nullptr;
@@ -140,6 +140,6 @@ bool I2c::IsValidPinPair() const {
          (scl_ == PinName::kPA8 && sda_ == PinName::kPC9);
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

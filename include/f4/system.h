@@ -4,7 +4,7 @@
 #include "f4/clock.h"
 #include "interface/error.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 class Error final : public interface::Error {
  public:
@@ -19,4 +19,4 @@ class System {
   static void ErrorHandler();
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

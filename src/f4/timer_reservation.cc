@@ -4,7 +4,7 @@
 
 #include <array>
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 
 struct TimerReservationState {
@@ -58,6 +58,6 @@ void TimerReservation::ReleaseEncoder(uint8_t timer) {
   }
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

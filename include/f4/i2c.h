@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_i2c.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 enum class I2cPeripheral : uint8_t { kI2c1, kI2c2, kI2c3 };
 
@@ -38,4 +38,4 @@ class I2c final : public interface::I2C {
   bool initialized_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

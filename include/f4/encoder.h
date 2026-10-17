@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_tim.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 enum class EncoderTimer : uint8_t { kTim1, kTim2, kTim3 };
 
@@ -40,4 +40,4 @@ class Encoder final : public interface::Encoder {
   bool initialized_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

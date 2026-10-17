@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <functional>
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 enum class CanFormat : uint8_t { kStandard, kExtended };
 enum class CanFrameType : uint8_t { kData, kRemote };
@@ -51,4 +51,4 @@ class Can {
   [[nodiscard]] virtual uint8_t GetReceiveErrorCount() const = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

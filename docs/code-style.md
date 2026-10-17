@@ -274,7 +274,7 @@ Google を基準とする命名・整形の方針は維持し、意味が分か�
 | `ValueTemplateParameterCase` | `lower_case` | `buffer_size` |
 | `ValueTemplateParameterIgnoredRegexp` | `k` + 大文字から始まる名前も許可 | `kBufferSize` |
 | `FunctionCase` | `CamelCase` | `ReadValue()` |
-| `NamespaceCase` | `lower_case` | `nbed::interface` |
+| `NamespaceCase` | `lower_case` | `nkrc::nbed::interface` |
 | `VariableCase`、`GlobalVariableCase` | `lower_case` | `received_count` |
 | `ParameterCase`、`ConstantParameterCase` | `lower_case` | `input_value` |
 | `MemberCase` | `lower_case` | struct の `message_size` |

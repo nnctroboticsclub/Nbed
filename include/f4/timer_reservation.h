@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 // Coordinates exclusive use of TIM1, TIM2, and TIM3 by the PWM and encoder
 // implementations. PWM channels can coexist on one timer, but an encoder
@@ -18,4 +18,4 @@ class TimerReservation final {
   static void ReleaseEncoder(uint8_t timer);
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

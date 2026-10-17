@@ -4,7 +4,7 @@
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_dma.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 // For Tim1Ch1
 class Dma1 final : public interface::Dma {
@@ -113,4 +113,4 @@ class DmaManager {
   static constinit Dma7 dma7_;
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

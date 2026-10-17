@@ -5,7 +5,7 @@
 
 #include "interface/time.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 // Monotonic wall time based on the HAL millisecond tick plus DWT sub-ms time.
 class Time {
@@ -36,4 +36,4 @@ class Timer final : public interface::Timer {
   bool running_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

@@ -2,7 +2,7 @@
 
 #include <numbers>
 
-namespace nbed {
+namespace nkrc::nbed {
 
 inline constexpr float kPi = std::numbers::pi_v<float>;
 
@@ -142,4 +142,4 @@ constexpr Angle operator""_rad(long double value) {
 
 }  // namespace literals
 
-}  // namespace nbed
+}  // namespace nkrc::nbed

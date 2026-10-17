@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <span>
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class Pwm {
  public:
@@ -27,4 +27,4 @@ class Pwm {
   virtual void Stop() = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

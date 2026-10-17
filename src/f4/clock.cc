@@ -12,7 +12,7 @@
 #include "stm32f4xx_hal_pwr_ex.h"
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 
 std::optional<uint32_t> AhbDividerFactor(uint32_t divider) {
@@ -237,6 +237,6 @@ void SysTick_Handler(void) {
 
 }  // extern "C"
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

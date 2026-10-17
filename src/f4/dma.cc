@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal_dma.h"
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 
 void HandleInterrupt(DMA_HandleTypeDef& handle) {
@@ -136,6 +136,6 @@ void DMA1_Stream1_IRQHandler() { HandleInterrupt(Dma7::GetHandle()); }
 
 }  // extern "C"
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

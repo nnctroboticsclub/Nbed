@@ -6,7 +6,7 @@
 #include "stm32f4xx_hal.h"  // IWYU pragma: keep
 #include "stm32f4xx_hal_gpio.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 uint32_t ToHalPull(GpioPull pull) {
   if (pull == GpioPull::kUp) {
@@ -83,6 +83,6 @@ bool DigitalIn::Read() const {
                           PinMapper::GetGpioPin(pin_)) == GPIO_PIN_SET;
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

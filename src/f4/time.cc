@@ -5,7 +5,7 @@
 #include "stm32f4xx.h"  // IWYU pragma: keep
 #include "stm32f4xx_hal.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 struct TimeState {
   uint32_t cycles_per_ms{1};
@@ -97,6 +97,6 @@ uint64_t Timer::ElapsedMicroseconds() const {
   return elapsed_us_ + (running_ ? Time::Microseconds() - started_at_us_ : 0U);
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

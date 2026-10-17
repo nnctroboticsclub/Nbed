@@ -8,7 +8,7 @@
 #include "interface/pwm.h"
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 enum class PwmTimer : uint8_t { kTim1, kTim2, kTim3 };
 enum class PwmChannel : uint8_t { kCh1, kCh2, kCh3, kCh4 };
@@ -54,4 +54,4 @@ class Pwm final : public interface::Pwm {
   bool initialized_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

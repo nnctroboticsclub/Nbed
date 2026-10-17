@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 #include "stm32f4xx_hal_uart.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 enum class UartPeripheral : uint8_t { kUsart2, kUsart3, kUart4 };
 
@@ -53,4 +53,4 @@ class Uart final : public interface::Uart {
   bool initialized_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

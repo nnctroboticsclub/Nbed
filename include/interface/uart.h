@@ -4,7 +4,7 @@
 #include <functional>
 #include <span>
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 using UartTxMessage = std::span<const uint8_t>;
 using UartRxMessage = std::span<uint8_t>;
@@ -31,4 +31,4 @@ class Uart {
   virtual void SetConsole() = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

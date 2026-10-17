@@ -20,7 +20,7 @@
 #include "interface/pin_names.h"
 #endif  // NBED_NO_DEFAULT_SERIAL
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 void Error::ErrorHandler() {
   __disable_irq();
@@ -279,6 +279,6 @@ void* _sbrk(ptrdiff_t incr) {
 
 }  // extern "C"
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

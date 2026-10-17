@@ -12,7 +12,7 @@
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 struct Pwm::TimerState {
   TIM_HandleTypeDef handle{};
@@ -393,6 +393,6 @@ uint32_t Pwm::TimerClockHz() const {
   return divider == RCC_HCLK_DIV1 ? pclk : pclk * 2U;
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

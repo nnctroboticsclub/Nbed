@@ -8,7 +8,7 @@
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 void EnableTimerClock(EncoderTimer timer) {
   if (timer == EncoderTimer::kTim1) {
@@ -142,6 +142,6 @@ void Encoder::ResetCount() {
   }
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

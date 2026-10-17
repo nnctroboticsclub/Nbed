@@ -3,7 +3,7 @@
 #include "interface/pin_names.h"
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 class PinMapper {
  public:
@@ -27,4 +27,4 @@ class PinMapper {
                                           const GPIO_InitTypeDef& config);
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

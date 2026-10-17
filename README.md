@@ -586,19 +586,26 @@ build_flags =
 | `NBED_NO_GLOBAL_NAMES` | `kPA5`、`kTim3`、`DigitalOut`、`CanMessage` などの短い名前をグローバル名前空間へ出さない。 | 大きな C++ プロジェクトで名前の衝突を防ぐ。 |
 | `NBED_NO_GLOBAL_FUNCTIONS` | グローバルの `SleepFor()` を出さない。 | 同名の関数との衝突を防ぐ。 |
 
+Nbed の名前空間は部内共通の `nkrc` 配下に置いています。
+抽象インターフェースは `nkrc::nbed::interface`、STM32F4 の実装は
+`nkrc::nbed::stm32::f4`、単位系とリテラルは `nkrc::nbed` と
+`nkrc::nbed::literals` です。
+通常は `nbed.h` が短い名前を公開するので、初心者は名前空間を意識する必要はありません。
+
 `NBED_NO_GLOBAL_NAMES` を使う場合は、型と列挙値を完全修飾します。
 
 ```cpp
 #define NBED_NO_GLOBAL_NAMES
 #include "nbed.h"
 
-nbed::f4::DigitalOut led(nbed::interface::PinName::kPA5);
+nkrc::nbed::stm32::f4::DigitalOut led(
+    nkrc::nbed::interface::PinName::kPA5);
 ```
 
 `NBED_NO_GLOBAL_FUNCTIONS` を使った場合の待機は、次のように書けます。
 
 ```cpp
-nbed::f4::ClockManager::GetClock().Sleep(std::chrono::milliseconds{100});
+nkrc::nbed::stm32::f4::ClockManager::GetClock().Sleep(std::chrono::milliseconds{100});
 ```
 
 ### PlatformIO に残す設定

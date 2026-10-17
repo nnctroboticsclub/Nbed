@@ -4,7 +4,7 @@
 
 #include <cstdint>
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 bool PinMapper::IsValidPin(interface::PinName pin_name) {
   const auto value = static_cast<uint8_t>(pin_name);
@@ -87,6 +87,6 @@ bool PinMapper::ConfigureGpio(interface::PinName pin_name,
   return true;
 }
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

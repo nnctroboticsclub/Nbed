@@ -16,18 +16,18 @@
 
 // 初心者向けグローバル名前空間
 #ifndef NBED_NO_GLOBAL_NAMES
-using nbed::interface::CanFrameType;
-using nbed::interface::CanMessage;
-using nbed::interface::CanRxCallback;
-using nbed::interface::CanRxFilter;
-using nbed::interface::I2CMessage;
-using nbed::interface::UartRxCallback;
-using nbed::interface::UartRxMessage;
-using nbed::interface::UartTxMessage;
-using enum nbed::interface::CanFormat;
-using enum nbed::interface::CanFrameType;
-using enum nbed::interface::PinName;
-using namespace nbed::literals;
+using nkrc::nbed::interface::CanFrameType;
+using nkrc::nbed::interface::CanMessage;
+using nkrc::nbed::interface::CanRxCallback;
+using nkrc::nbed::interface::CanRxFilter;
+using nkrc::nbed::interface::I2CMessage;
+using nkrc::nbed::interface::UartRxCallback;
+using nkrc::nbed::interface::UartRxMessage;
+using nkrc::nbed::interface::UartTxMessage;
+using enum nkrc::nbed::interface::CanFormat;
+using enum nkrc::nbed::interface::CanFrameType;
+using enum nkrc::nbed::interface::PinName;
+using namespace nkrc::nbed::literals;
 using namespace std::chrono_literals;
 #endif
 
@@ -46,29 +46,29 @@ using namespace std::chrono_literals;
 
 // 初心者向けグローバル名前空間
 #ifndef NBED_NO_GLOBAL_NAMES
-using namespace nbed::f4;
-using enum nbed::f4::CanPeripheral;
-using enum nbed::f4::CanMode;
-// using enum nbed::f4::EncoderTimer;
-using enum nbed::f4::GpioPull;
-using enum nbed::f4::I2cPeripheral;
-using enum nbed::f4::PwmTimer;
-using enum nbed::f4::PwmChannel;
-using enum nbed::f4::UartPeripheral;
+using namespace nkrc::nbed::stm32::f4;
+using enum nkrc::nbed::stm32::f4::CanPeripheral;
+using enum nkrc::nbed::stm32::f4::CanMode;
+// using enum nkrc::nbed::stm32::f4::EncoderTimer;
+using enum nkrc::nbed::stm32::f4::GpioPull;
+using enum nkrc::nbed::stm32::f4::I2cPeripheral;
+using enum nkrc::nbed::stm32::f4::PwmTimer;
+using enum nkrc::nbed::stm32::f4::PwmChannel;
+using enum nkrc::nbed::stm32::f4::UartPeripheral;
 #endif  // NBED_NO_GLOBAL_NAMES
 
 #ifndef NBED_NO_GLOBAL_FUNCTIONS
 inline void SleepFor(std::chrono::seconds sec) {
-  nbed::f4::ClockManager::GetClock().Sleep(
+  nkrc::nbed::stm32::f4::ClockManager::GetClock().Sleep(
       std::chrono::duration_cast<std::chrono::milliseconds>(sec));
 }
 
 inline void SleepFor(std::chrono::milliseconds ms) {
-  nbed::f4::ClockManager::GetClock().Sleep(ms);
+  nkrc::nbed::stm32::f4::ClockManager::GetClock().Sleep(ms);
 }
 
 inline void SleepFor(uint32_t ms) {
-  nbed::f4::ClockManager::GetClock().Sleep(ms);
+  nkrc::nbed::stm32::f4::ClockManager::GetClock().Sleep(ms);
 }
 #endif  // NBED_NO_GLOBAL_FUNCTIONS
 #endif  // STM32F446xx

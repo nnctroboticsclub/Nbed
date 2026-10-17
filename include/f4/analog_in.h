@@ -7,7 +7,7 @@
 #include "interface/pin_names.h"
 #include "stm32f4xx_hal.h"  // IWYU pragma: export
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 
 class AnalogIn final : public interface::AnalogIn {
  public:
@@ -31,4 +31,4 @@ class AnalogIn final : public interface::AnalogIn {
   bool initialized_{false};
 };
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4

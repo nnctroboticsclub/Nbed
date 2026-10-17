@@ -3,7 +3,7 @@
 #include <chrono>
 #include <cstdint>
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class Clock {
  public:
@@ -20,4 +20,4 @@ class Clock {
   virtual void Sleep(std::chrono::milliseconds milliseconds) = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

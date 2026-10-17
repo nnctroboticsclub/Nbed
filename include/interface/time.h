@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class Timer {
  public:
@@ -21,4 +21,4 @@ class Timer {
   [[nodiscard]] virtual uint64_t ElapsedMicroseconds() const = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

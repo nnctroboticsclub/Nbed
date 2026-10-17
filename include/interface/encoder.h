@@ -2,7 +2,7 @@
 
 #include "units.h"
 
-namespace nbed::interface {
+namespace nkrc::nbed::interface {
 
 class Encoder {
  public:
@@ -21,4 +21,4 @@ class Encoder {
   virtual void ResetCount() = 0;
 };
 
-}  // namespace nbed::interface
+}  // namespace nkrc::nbed::interface

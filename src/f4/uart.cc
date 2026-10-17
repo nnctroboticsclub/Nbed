@@ -10,7 +10,7 @@
 #include "stm32f4xx_hal_gpio_ex.h"
 #include "stm32f4xx_hal_rcc.h"
 
-namespace nbed::f4 {
+namespace nkrc::nbed::stm32::f4 {
 namespace {
 Uart*& Usart2Instance() {
   static Uart* instance = nullptr;
@@ -243,6 +243,6 @@ int __io_getchar() {
 }
 }  // extern "C"
 
-}  // namespace nbed::f4
+}  // namespace nkrc::nbed::stm32::f4
 
 #endif

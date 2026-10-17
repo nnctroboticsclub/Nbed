@@ -51,13 +51,13 @@ bool I2cTest(I2c& i2c) {
   return initialized;
 }
 
-bool CanTest(nbed::interface::Can& can) {
+bool CanTest(nkrc::nbed::interface::Can& can) {
   const bool initialized = can.Initialize();
   Logger::Info("test", "CAN initialize: %s", initialized ? "PASS" : "FAIL");
   const bool filter = can.SetRxFilter(CanRxFilter{
       .id = 0x123,
       .mask = 0x7ff,
-      .format = nbed::interface::CanFormat::kStandard,
+      .format = nkrc::nbed::interface::CanFormat::kStandard,
   });
   Logger::Info("test", "CAN filter: %s", filter ? "PASS" : "FAIL");
   const bool started = can.Start();
