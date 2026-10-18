@@ -1,119 +1,98 @@
 {
   "version": "2.0.0",
+  // PlatformIO 拡張が用意する Core を使用し、システムの PATH に依存しない。
+  // Core の保存先を変更した場合は command と windows.command を合わせて変更する。
+  "options": { "cwd": "${workspaceFolder}" },
+  "presentation": {
+    "reveal": "always",
+    "panel": "dedicated",
+    "clear": true
+  },
+  // -e を指定せず platformio.ini の default_envs に従う。
   "tasks": [
     {
-      "label": "Nbed: ビルド（LED点滅）",
+      "label": "Nbed: ビルド（既定環境）",
       "type": "process",
-      "command": "pio",
-      "args": [
-        "run",
-        "--environment",
-        "f4-blink"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
+      "command": "${userHome}/.platformio/penv/bin/platformio",
+      "windows": {
+        "command": "${userHome}/.platformio/penv/Scripts/platformio.exe"
       },
-      "problemMatcher": [
-        "$platformio"
-      ],
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      },
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
+      "args": ["run"],
+      "problemMatcher": ["$platformio"],
+      "group": { "kind": "build", "isDefault": true },
+      "detail": "platformio.ini の default_envs をビルド。Ctrl+Shift+B。"
     },
     {
-      "label": "Nbed: 書込み（LED点滅）",
+      "label": "Nbed: 書き込み（既定環境）",
       "type": "process",
-      "command": "pio",
-      "args": [
-        "run",
-        "--environment",
-        "f4-blink",
-        "--target",
-        "upload"
-      ],
-      "problemMatcher": [
-        "$platformio"
-      ],
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
+      "command": "${userHome}/.platformio/penv/bin/platformio",
+      "windows": {
+        "command": "${userHome}/.platformio/penv/Scripts/platformio.exe"
       },
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
+      "args": ["run", "--target", "upload"],
+      "problemMatcher": ["$platformio"],
+      "detail": "既定環境をビルドして実機へ書き込む。"
     },
     {
       "label": "Nbed: シリアルモニター（LED点滅）",
       "type": "process",
-      "command": "pio",
-      "args": [
-        "device",
-        "monitor",
-        "--environment",
-        "f4-blink"
-      ],
+      "command": "${userHome}/.platformio/penv/bin/platformio",
+      "windows": {
+        "command": "${userHome}/.platformio/penv/Scripts/platformio.exe"
+      },
+      "args": ["device", "monitor", "--environment", "f4-blink"],
+      "problemMatcher": [],
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
         "focus": true,
         "clear": true
       },
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
+      "detail": "LED点滅サンプル f4-blink のシリアル設定で接続する。"
     },
     {
-      "label": "Nbed: clangd用ビルド情報を更新",
+      "label": "Nbed: clangd用ビルド情報を更新（既定環境）",
       "type": "process",
-      "command": "pio",
-      "args": [
-        "run",
-        "--environment",
-        "f4-blink",
-        "--target",
-        "compiledb"
-      ],
-      "problemMatcher": [
-        "$platformio"
-      ],
-      "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated",
-        "clear": true
+      "command": "${userHome}/.platformio/penv/bin/platformio",
+      "windows": {
+        "command": "${userHome}/.platformio/penv/Scripts/platformio.exe"
       },
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
+      "args": ["run", "--target", "compiledb"],
+      "problemMatcher": ["$platformio"],
+      "detail": "ファームウェアをコンパイルせず compile_commands.json を再生成する。"
     },
     {
-      "label": "Nbed: ビルド結果を消去（LED点滅）",
+      "label": "Nbed: クリーン（既定環境）",
       "type": "process",
-      "command": "pio",
-      "args": [
-        "run",
-        "--environment",
-        "f4-blink",
-        "--target",
-        "clean"
-      ],
-      "problemMatcher": [
-        "$platformio"
-      ],
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
+      "command": "${userHome}/.platformio/penv/bin/platformio",
+      "windows": {
+        "command": "${userHome}/.platformio/penv/Scripts/platformio.exe"
       },
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
+      "args": ["run", "--target", "clean"],
+      "problemMatcher": ["$platformio"],
+      "detail": "PlatformIO の通常クリーン。共有ビルドキャッシュは残す。"
+    },
+    {
+      "label": "Nbed: 生成物とキャッシュを全削除",
+      "type": "process",
+      "command": "${userHome}/.platformio/penv/bin/python",
+      "windows": {
+        "command": "${userHome}/.platformio/penv/Scripts/python.exe"
+      },
+      "args": ["${workspaceFolder}/.vscode/clean.py"],
+      "problemMatcher": [],
+      "detail": "全環境の build/・.cache/・旧 .pio/build/ とルートの生成DBを削除する。"
+    },
+    {
+      "label": "Nbed: 完全再ビルド（既定環境）",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Nbed: 生成物とキャッシュを全削除",
+        "Nbed: ビルド（既定環境）"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "全環境の生成物とキャッシュを削除した後、既定環境をビルドする。"
     }
   ]
 }

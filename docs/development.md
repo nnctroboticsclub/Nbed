@@ -118,7 +118,7 @@ DB 統合処理は yamamoto-mdc の改良版 `extra_script.py` の方式を取�
 `--query-driver` を通して C++ 標準ヘッダの場所を取得できるようにするためです。
 ユーザー名などの実パスは生成物だけに記録し、共有設定には固定しません。
 
-`chrono` などが見つからない場合は、VS Code の「Nbed: clangd用ビルド情報を更新」タスク、
+`chrono` などが見つからない場合は、VS Code の「Nbed: clangd用ビルド情報を更新（既定環境）」タスク、
 または次のコマンドでビルド情報を再生成します。
 
 ```sh
@@ -127,8 +127,18 @@ pio run -e f4-blink -t compiledb
 
 更新後も診断が残る場合は、コマンドパレットから `clangd: Restart language server` を実行します。
 
-VS Code のタスクには、既定 LED サンプルのビルド、書込み、シリアルモニター、
-ビルド情報の更新、クリーンを用意しています。
+VS Code のタスクは `V:/7_script/vscode/projects/robotics/.vscode/tasks.json` を基に統合しています。
+`Ctrl+Shift+B` は `platformio.ini` の `default_envs` をビルドし、現在の対象は `f4-blink` です。
+通常ビルド・書き込み・ビルド情報の更新・通常クリーンに加え、次のタスクを使えます。
+
+- 「Nbed: 生成物とキャッシュを全削除」: 全環境の `build/`・`.cache/`・旧 `.pio/build/` とルートの生成DBを削除。
+- 「Nbed: 完全再ビルド（既定環境）」: 全削除が成功してから既定環境をビルド。
+- 「Nbed: シリアルモニター（LED点滅）」: 従来どおり `f4-blink` のシリアル設定で接続。
+
+全削除には `.vscode/clean.py` を使い、`.pio/libdeps/`、`include/`、`src/`、`examples/` は保持します。
+全環境のビルド結果を消しますが、再ビルドするのは既定環境だけです。
+PlatformIO標準の実行ファイルを直接使うため、システムのPATHやターミナルの種類に依存しません。
+Coreの保存先を変えたPCでは、タスクの実行ファイルのパスを合わせてください。
 PlatformIO のターミナルからも同じ操作を実行できます。
 
 ## ライブラリとしての配布
