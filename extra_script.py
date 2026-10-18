@@ -2,10 +2,11 @@
 
 from os.path import join, realpath
 
-Import("env", "projenv", "pio_lib_builder")
+# SCons supplies Import/DefaultEnvironment and imports these globals at runtime.
+Import("env", "projenv", "pio_lib_builder")  # pyright: ignore[reportUndefinedVariable]
 
 
-LIBRARY_DIR = realpath(pio_lib_builder.path)
+LIBRARY_DIR = realpath(pio_lib_builder.path)  # pyright: ignore[reportUndefinedVariable]
 INCLUDE_DIR = join(LIBRARY_DIR, "include")
 LDSCRIPT_PATH = join(LIBRARY_DIR, "linker", "STM32F446RETX_FLASH.ld")
 
@@ -39,10 +40,10 @@ def configure_build_environment(build_env):
 
 # The library environment builds Nbed itself. The global and project
 # environments make the same settings available to the HAL and application.
-configure_build_environment(env)
-configure_build_environment(projenv)
+configure_build_environment(env)  # pyright: ignore[reportUndefinedVariable]
+configure_build_environment(projenv)  # pyright: ignore[reportUndefinedVariable]
 
-global_env = DefaultEnvironment()
+global_env = DefaultEnvironment()  # pyright: ignore[reportUndefinedVariable]
 configure_build_environment(global_env)
 global_env.Replace(LDSCRIPT_PATH=LDSCRIPT_PATH)
 global_env.Depends("$BUILD_DIR/$PROGNAME$PROGSUFFIX", LDSCRIPT_PATH)

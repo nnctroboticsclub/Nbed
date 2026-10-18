@@ -25,6 +25,11 @@ Nbed/
 Windows の管理者権限や、OS のシンボリックリンク作成権限は必要ありません。
 logger は `library.json` の依存関係から自動的にインストールされます。
 
+`extra_script.py` の `Import`・`DefaultEnvironment` と、インポートされる環境変数は
+PlatformIO/SCons が実行時に提供します。通常のPythonとして解析するPylanceには見えないため、
+該当箇所だけ `pyright: ignore[reportUndefinedVariable]` を付けています。
+ビルド処理や、それ以外のPythonコードの診断は変更しません。
+
 ## 準備と最初のビルド
 
 VS Code + PlatformIO IDE、または PlatformIO Core を使います。
