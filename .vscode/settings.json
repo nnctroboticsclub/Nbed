@@ -1,61 +1,113 @@
 {
-  // 共有するコード規約・ツール・ファイルの扱い。
+  // V:/7_script/vscode の共有設定を基に、このひな型向けに校正。
+  // コード編集・自動保存・ツール動作を共有。テーマ・フォント・ターミナルは個人設定。
   "files.encoding": "utf8",
   "files.eol": "\n",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  // 既存ファイルの字下げを尊重する。新規・判定不能時はスペース2個。
+  "editor.detectIndentation": true,
+  "editor.linkedEditing": true,
+  "editor.autoIndentOnPaste": true,
+  // raw文字列などの内容を、貼り付け時の自動字下げで変えない。
+  "editor.autoIndentOnPasteWithinString": false,
+  "editor.renderWhitespace": "all",
+  "editor.guides.indentation": true,
+  "editor.guides.bracketPairs": true,
+  "editor.semanticHighlighting.enabled": true,
+  // 日本語は許可し、紛らわしい文字・不可視文字の検知は維持する。
+  "editor.unicodeHighlight.allowedLocales": { "ja": true },
+  "editor.quickSuggestions": {
+    "other": "on",
+    "strings": "on",
+    "comments": "off"
+  },
+  // 整形は言語別に有効化。afterDelay の自動保存では整形しないため Ctrl+S で整形する。
+  "editor.formatOnSave": false,
+  "editor.formatOnPaste": false,
   "[c]": {
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
-    "editor.detectIndentation": false,
+    "editor.detectIndentation": true,
+    "editor.rulers": [80],
     "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.formatOnPaste": true
   },
   "[cpp]": {
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
-    "editor.detectIndentation": false,
+    "editor.detectIndentation": true,
+    "editor.rulers": [80],
     "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.formatOnPaste": true
   },
-  "C_Cpp.intelliSenseEngine": "disabled",
-
-  // 標準のPlatformIO保存先。保存先を変更したプロジェクトでは配列を調整する。
-  "clangd.arguments": [
-    "--query-driver=${userHome}/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-*",
-    "--compile-commands-dir=${workspaceFolder}"
-  ],
-  // コンパイルDB・compile_flags.txt の変更時は、自動再読込対応版でも再起動する。
-  "clangd.onConfigChanged": "restart",
-  "clangd.onConfigChangedForceEnable": true,
-
-  // ヘッダーはC++として扱う。C主体のプロジェクトでは *.h の関連付けを変更する。
+  "[markdown]": {
+    "editor.unicodeHighlight.ambiguousCharacters": true,
+    "editor.unicodeHighlight.invisibleCharacters": true,
+    // 行末のスペース2個による改行を保持。文書は自動整形しない。
+    "files.trimTrailingWhitespace": false,
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": "off",
+      "comments": "off",
+      "strings": "off"
+    }
+  },
   "files.associations": {
     "*.h": "cpp",
     ".clangd": "yaml",
     ".clang-format": "yaml",
     "LICENSE": "plaintext"
   },
-  // 一覧ではgit・生成DBを隠す。設定・ログは表示する。
+  "platformio-ide.disablePIOHomeStartup": true,
+  "platformio-ide.autoOpenPlatformIOIniFile": false,
+  // 自動保存の待ち時間・個人設定によらず、タスク開始前に保存する。
+  "task.saveBeforeRun": "always",
+  "git.autofetch": true,
+  "git.openRepositoryInParentFolders": "never",
+  "todo-tree.tree.showBadges": true,
+  "todo-tree.tree.showCountsInTree": true,
+  "todo-tree.filtering.useBuiltInExcludes": "search excludes",
+  "C_Cpp.intelliSenseEngine": "disabled",
+
+  // vscode-clangd が userHome を解決するためWindows・macOS・Linuxで共通。
+  // Coreの保存先を変更したPCは、このプロジェクトの配列を実際の保存先に合わせる。
+  "clangd.arguments": [
+    "--query-driver=${userHome}/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-*",
+    "--compile-commands-dir=${workspaceFolder}"
+  ],
+  // 監視対象のルートDBが変わった場合にだけ再起動する。
+  // clangd自身の遅延再読込に加え、開いているファイルの診断も更新する。
+  "clangd.onConfigChanged": "restart",
+  "clangd.onConfigChangedForceEnable": true,
+  // 一覧ではルートのキャッシュ・生成DBを隠す。build/ と .pio/ は確認用に表示する。
   "files.exclude": {
-    "**/.git": true,
+    ".git": true,
+    ".cache": true,
     "compile_commands.json": true
   },
-  // 監視除外はルート直下の成果物だけ。コンパイルDBは更新を検知する。
+  // 生成物はルート直下のみ除外。src/build/ などは監視・検索対象に残す。
+  // ルートの compile_commands.json は clangd の更新検知のため監視する。
   "files.watcherExclude": {
     ".cache/**": true,
     ".pio/**": true,
     "build/**": true
   },
-  // 通常検索から設定と成果物を除外。src/build/ などの同名フォルダは対象に含める。
+  // 通常のコード検索からルートのエディター設定・整形規約・説明書も除外する。
   "search.exclude": {
     ".vscode/**": true,
-    "*.code-workspace": true,
-    ".editorconfig": true,
-    ".gitignore": true,
-    ".gitattributes": true,
     ".clangd": true,
     ".clang-format": true,
-    ".clang-tidy": true,
-    "platformio.ini": true,
     ".cache/**": true,
     ".pio/**": true,
     "build/**": true,
