@@ -1,5 +1,5 @@
 {
-  // 共有するコード規約とツール設定。表示・自動保存・ターミナルは個人設定。
+  // 共有するコード規約・ツール・ファイルの扱い。
   "files.encoding": "utf8",
   "files.eol": "\n",
   "[c]": {
@@ -16,34 +16,49 @@
     "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
     "editor.formatOnSave": true
   },
-  "files.associations": {
-    "*.h": "cpp",
-    ".clangd": "yaml",
-    ".clang-format": "yaml",
-    "LICENSE": "plaintext",
-  },
   "C_Cpp.intelliSenseEngine": "disabled",
 
-  // vscode-clangd が userHome を解決するためWindows・macOS・Linuxで共通。
-  // PlatformIO Coreの保存先を変更したPCは、個人設定側でこの配列を上書きする。
+  // 標準のPlatformIO保存先。保存先を変更したプロジェクトでは配列を調整する。
   "clangd.arguments": [
     "--query-driver=${userHome}/.platformio/packages/toolchain-gccarmnoneeabi/bin/arm-none-eabi-*",
     "--compile-commands-dir=${workspaceFolder}"
   ],
-  // 監視対象のルートDBが変わった場合にだけ再起動する。
-  // clangd自身の遅延再読込に加え、開いているファイルの診断も更新する。
+  // コンパイルDB・compile_flags.txt の変更時は、自動再読込対応版でも再起動する。
   "clangd.onConfigChanged": "restart",
   "clangd.onConfigChangedForceEnable": true,
-  "files.exclude": { "**/.git": true },
-  "files.watcherExclude": {
-    "**/.cache/**": true,
-    "**/.pio/**": true,
-    "**/build/**": true
+
+  // ヘッダーはC++として扱う。C主体のプロジェクトでは *.h の関連付けを変更する。
+  "files.associations": {
+    "*.h": "cpp",
+    ".clangd": "yaml",
+    ".clang-format": "yaml",
+    "LICENSE": "plaintext"
   },
+  // 一覧ではgit・生成DBを隠す。設定・ログは表示する。
+  "files.exclude": {
+    "**/.git": true,
+    "compile_commands.json": true
+  },
+  // 監視除外はルート直下の成果物だけ。コンパイルDBは更新を検知する。
+  "files.watcherExclude": {
+    ".cache/**": true,
+    ".pio/**": true,
+    "build/**": true
+  },
+  // 通常検索から設定と成果物を除外。src/build/ などの同名フォルダは対象に含める。
   "search.exclude": {
-    "**/.cache/**": true,
-    "**/.pio/**": true,
-    "**/build/**": true,
-    "**/compile_commands.json": true
+    ".vscode/**": true,
+    "*.code-workspace": true,
+    ".editorconfig": true,
+    ".gitignore": true,
+    ".gitattributes": true,
+    ".clangd": true,
+    ".clang-format": true,
+    ".clang-tidy": true,
+    "platformio.ini": true,
+    ".cache/**": true,
+    ".pio/**": true,
+    "build/**": true,
+    "compile_commands.json": true
   }
 }
