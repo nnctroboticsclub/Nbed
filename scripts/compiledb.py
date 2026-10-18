@@ -213,7 +213,8 @@ def publish_database(build_env, raw_path, database_root, context):
 
 def configure(build_env):
   """Called as a PRE project extra_script, before source objects are created."""
-  from SCons.Script import Action, COMMAND_LINE_TARGETS
+  # PlatformIO adds its bundled SCons to the import path only during a build.
+  from SCons.Script import Action, COMMAND_LINE_TARGETS  # pyright: ignore[reportMissingImports]
 
   targets = set(COMMAND_LINE_TARGETS)
   explicit = "compiledb" in targets
@@ -289,9 +290,10 @@ def configure(build_env):
 
 # Importable with ordinary Python for regression tests; SCons supplies Import.
 try:
-  _import_environment = Import
+  _import_environment = Import  # pyright: ignore[reportUndefinedVariable]
 except NameError:
   _import_environment = None
 if _import_environment is not None:
   _import_environment("env")
-  configure(env)
+  # SCons injects env into this script's globals after Import("env").
+  configure(env)  # pyright: ignore[reportUndefinedVariable]
