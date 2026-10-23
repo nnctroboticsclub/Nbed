@@ -70,6 +70,8 @@ pio device monitor -e f4-blink
 | `06-f4-nbed-example` | 機能別の使用例。初期状態では `CanExample()` を実行 |
 | `f3-blink` | NUCLEO-F303K8 の PB3 LED 点滅 |
 | `f3-all-test` | F303K8 の全機能・CAN 内部ループバック |
+| `f4-spi-test` | F446RE の SPI1 ループバック（D11–D12 を接続） |
+| `f3-spi-test` | F303K8 の SPI1 ループバック（D11–D12 を接続） |
 
 F303K8 の配線・クロック・ピン表は [F303K8 ガイド](f303k8.md)を参照してください。
 
@@ -83,10 +85,10 @@ UART・CAN・アナログ入力などの例には、それぞれに合う配線�
 サンプルのピン指定と [ライブラリガイド](../README.md)を確認してから書き込んでください。
 `00-f4-all-test` と `04-f4-uart-test` の `NBED_NO_DEFAULT_SERIAL` は移行元から引き継いでいます。
 
-全10環境をビルドするには、既定環境を上書きして実行します。
+全12環境をビルドするには、既定環境を上書きして実行します。
 
 ```sh
-pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test -e 03-f4-pwm-test -e 04-f4-uart-test -e 05-f4-can-test -e 06-f4-nbed-example -e f3-blink -e f3-all-test
+pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test -e 03-f4-pwm-test -e 04-f4-uart-test -e 05-f4-can-test -e 06-f4-nbed-example -e f3-blink -e f3-all-test -e f4-spi-test -e f3-spi-test
 ```
 
 これらは実機確認用プログラムです。ビルドの成功だけでは実機の動作確認は完了しません。
@@ -107,7 +109,8 @@ python -m unittest discover -s tests -v
 Windows のアプリ制御が生成した実行ファイルを拒否する場合も、理由を表示して実行だけ
 スキップします。数値計算の `static_assert` はコンパイル時に検証されます。
 HAL を小さな代替実装に置き換え、全ピン値の判定、GPIO、タイマの競合、PWM/I²C の
-計算、計時の割り込みと周回、UART のまとめ送り・分割・エラーを実行します。
+計算、計時の割り込みと周回、UART のまとめ送り・分割・エラー、SPI のモード・分周・
+ピン設定・バッファ境界・所有権・送受信とエラーを確認します。
 実機での波形・通信確認は別途必要です。
 
 ## VS Code と clangd

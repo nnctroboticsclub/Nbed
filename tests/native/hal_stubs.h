@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <utility>
 #include <vector>
 
 struct GPIO_TypeDef {
@@ -41,7 +42,11 @@ enum {
   GPIO_AF8_UART4
 };
 
-inline void HAL_GPIO_Init(GPIO_TypeDef*, GPIO_InitTypeDef*) {}
+inline std::vector<std::pair<GPIO_TypeDef*, GPIO_InitTypeDef>> gpio_inits;
+
+inline void HAL_GPIO_Init(GPIO_TypeDef* port, GPIO_InitTypeDef* config) {
+  gpio_inits.emplace_back(port, *config);
+}
 
 inline void HAL_GPIO_WritePin(GPIO_TypeDef* port, uint16_t pin,
                               GPIO_PinState state) {
@@ -114,6 +119,106 @@ inline HAL_StatusTypeDef HAL_UART_Receive(UART_HandleTypeDef*, uint8_t*,
 inline HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef*, uint8_t*,
                                              uint16_t) {
   return HAL_OK;
+}
+
+struct SPI_TypeDef {
+  bool enabled{false};
+};
+inline SPI_TypeDef spi1, spi2, spi3;
+#define SPI1 (&spi1)
+#define SPI2 (&spi2)
+#define SPI3 (&spi3)
+#define __HAL_RCC_SPI1_CLK_ENABLE() ((void)0)
+#define __HAL_RCC_SPI2_CLK_ENABLE() ((void)0)
+#define __HAL_RCC_SPI3_CLK_ENABLE() ((void)0)
+#define __HAL_SPI_ENABLE(handle) ((handle)->Instance->enabled = true)
+
+inline constexpr uint32_t GPIO_AF5_SPI1 = 5;
+inline constexpr uint32_t GPIO_AF6_SPI3 = 6;
+inline constexpr uint32_t GPIO_AF7_SPI2 = 7;
+inline constexpr uint32_t GPIO_AF7_SPI3 = 7;
+
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_2 = 0;
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_4 = 8;
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_8 = 16;
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_16 = 24;
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_32 = 32;
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_64 = 40;
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_128 = 48;
+inline constexpr uint32_t SPI_BAUDRATEPRESCALER_256 = 56;
+enum {
+  SPI_MODE_MASTER, SPI_DIRECTION_2LINES, SPI_DATASIZE_8BIT,
+  SPI_POLARITY_LOW, SPI_POLARITY_HIGH, SPI_PHASE_1EDGE, SPI_PHASE_2EDGE,
+  SPI_NSS_SOFT, SPI_FIRSTBIT_MSB, SPI_FIRSTBIT_LSB, SPI_TIMODE_DISABLE,
+  SPI_CRCCALCULATION_DISABLE, SPI_NSS_PULSE_DISABLE, SPI_CRC_LENGTH_DATASIZE
+};
+
+struct SPI_InitTypeDef {
+  uint32_t Mode{}, Direction{}, DataSize{}, CLKPolarity{}, CLKPhase{}, NSS{},
+      BaudRatePrescaler{}, FirstBit{}, TIMode{}, CRCCalculation{}, CRCPolynomial{},
+      NSSPMode{}, CRCLength{};
+};
+
+struct SPI_HandleTypeDef {
+  SPI_TypeDef* Instance{};
+  SPI_InitTypeDef Init{};
+};
+
+inline SPI_HandleTypeDef last_spi_init;
+inline HAL_StatusTypeDef spi_init_status = HAL_OK;
+inline HAL_StatusTypeDef spi_transfer_status = HAL_OK;
+inline unsigned spi_init_calls = 0, spi_deinit_calls = 0, spi_transfer_calls = 0;
+inline uint16_t spi_size = 0;
+inline uint32_t spi_timeout = 0;
+inline std::vector<uint8_t> spi_tx_data;
+
+inline HAL_StatusTypeDef HAL_SPI_Init(SPI_HandleTypeDef* handle) {
+  ++spi_init_calls;
+  last_spi_init = *handle;
+  return spi_init_status;
+}
+
+inline HAL_StatusTypeDef HAL_SPI_DeInit(SPI_HandleTypeDef* handle) {
+  ++spi_deinit_calls;
+  handle->Instance->enabled = false;
+  return HAL_OK;
+}
+
+inline HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef*, uint8_t* data,
+                                         uint16_t size, uint32_t timeout) {
+  ++spi_transfer_calls;
+  spi_size = size;
+  spi_timeout = timeout;
+  spi_tx_data.assign(data, data + size);
+  return spi_transfer_status;
+}
+
+inline HAL_StatusTypeDef HAL_SPI_TransmitReceive(
+    SPI_HandleTypeDef* handle, uint8_t* tx, uint8_t* rx, uint16_t size,
+    uint32_t timeout) {
+  const auto status = HAL_SPI_Transmit(handle, tx, size, timeout);
+  if (status == HAL_OK) {
+    for (uint16_t index = 0; index < size; ++index) {
+      rx[index] = spi_tx_data[index];
+    }
+  }
+  return status;
+}
+
+inline uint32_t HAL_RCC_GetPCLK1Freq() {
+#ifdef STM32F303x8
+  return 32'000'000;
+#else
+  return 45'000'000;
+#endif
+}
+
+inline uint32_t HAL_RCC_GetPCLK2Freq() {
+#ifdef STM32F303x8
+  return 64'000'000;
+#else
+  return 90'000'000;
+#endif
 }
 
 inline void HAL_UART_IRQHandler(UART_HandleTypeDef*) {}

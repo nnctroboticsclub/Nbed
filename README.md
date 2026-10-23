@@ -1,6 +1,6 @@
 # Nbed
 
-Nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、UART、CAN、
+Nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、SPI、UART、CAN、
 エンコーダを扱うための C++ ライブラリです。STM32 HAL の初期化手順を隠しつつ、使用する
 タイマ・通信機能・ピンをコードに明示して、間違った組み合わせは `Initialize()` の失敗として
 検出します。
@@ -31,6 +31,7 @@ F446RE 向けです。F303K8 の設定・ピン表・実機確認手順は
   - [PWM（サーボ・モータドライバ）](#pwmサーボモータドライバ)
     - [PWM で特に重要な制約](#pwm-で特に重要な制約)
   - [I2C（センサ）](#i2cセンサ)
+  - [SPI（センサ・周辺機器）](#spiセンサ周辺機器)
   - [UART（PC・外部機器とのシリアル通信）](#uartpc外部機器とのシリアル通信)
     - [既定の `printf`](#既定の-printf)
     - [任意の UART を使う](#任意の-uart-を使う)
@@ -46,6 +47,7 @@ F446RE 向けです。F303K8 の設定・ピン表・実機確認手順は
     - [ADC1](#adc1)
     - [PWM](#pwm)
     - [I²C](#ic)
+    - [SPI](#spi)
     - [UART](#uart)
     - [CAN](#can-1)
     - [エンコーダ](#エンコーダ-1)
@@ -300,6 +302,33 @@ if (!i2c.Receive(read_message)) {
 抵抗だけに頼らず、適切なプルアップ抵抗を SCL/SDA に入れてください。`Send()` と `Receive()` は
 完了まで待つ（ブロッキングする）関数です。
 
+## SPI（センサ・周辺機器）
+
+8 bit の SPI マスターです。送信、受信、同時送受信に対応し、モード 0〜3 と MSB/LSB 順を
+選べます。次は F446RE の例です。CS は `DigitalOut` で操作します。
+
+```cpp
+Spi spi(kSpi1, kPA5, kPA6, kPA7, 1'000'000);  // SCK, MISO, MOSI
+DigitalOut cs(kD10, true);
+if (!cs.Initialize() || !spi.Initialize()) {
+  System::ErrorHandler();
+}
+
+const std::array<uint8_t, 2> tx{0x00, 0xff};
+std::array<uint8_t, 2> rx{};
+cs = false;
+const bool success = spi.Transfer(tx, rx, 100);  // タイムアウト 100 ms
+cs = true;
+if (!success) {
+  System::ErrorHandler();
+}
+```
+
+`std::array` には `<array>` を include します。通信速度は指定値を超えない分周値を選び、
+`GetFrequencyHz()` で実速度を取得できます。F303K8 は `kPB3, kPB4, kPB5` が
+Arduino コネクタの SPI1 に相当します。対応ピン・モード・制約・ループバック確認は
+[SPI ガイド](docs/spi.md)を参照してください。
+
 ## UART（PC・外部機器とのシリアル通信）
 
 ### 既定の `printf`
@@ -548,6 +577,17 @@ Arduino 互換コネクタの表記を使うこともできます。例えばNuc
 | I2C2 | `PB10` / `PB3`、`PB10` / `PC12` |
 | I2C3 | `PA8` / `PB4`、`PA8` / `PC9` |
 
+### SPI
+
+| 周辺機能 | SCK | MISO | MOSI |
+| --- | --- | --- | --- |
+| SPI1 | `PA5`, `PB3` | `PA6`, `PB4` | `PA7`, `PB5` |
+| SPI2 | `PA9`, `PB10`, `PB13`, `PC7` | `PB14`, `PC2` | `PB15`, `PC1`, `PC3` |
+| SPI3 | `PB3`, `PC10` | `PB4`, `PC11` | `PB0`, `PB2`, `PB5`, `PC1`, `PC12` |
+
+各列のピンは組み合わせて使えます。CS は別の GPIO で制御します。
+PA5 は基板上 LED と共用なので、SPI1 の SCK として使う場合は LED 出力を初期化しません。
+
 ### UART
 
 | 周辺機能 | RX | TX |
@@ -673,10 +713,10 @@ PWM と CAN の実際の周波数はクロック設定に依存します。ク�
 
 - 対象 MCU は STM32F446RE と STM32F303K8（LQFP32）です。ほかの STM32F3/F4/F7 は
   未対応です。F3 の名前空間は `nkrc::nbed::stm32::f3` です。
-- SPI、外部割り込み、ADC DMA、UART DMA はこの API では提供していません。
+- 外部割り込み、ADC DMA、UART DMA、SPI DMA・割り込み転送・スレーブはこの API では提供していません。
 - `Pwm::SendDataDma()` は将来の拡張用 API です。現版ではデータを出力しないため、使用しないで
   ください。
-- I²C、UART の通常送受信、CAN の `Receive()` はブロッキングです。周期処理を止めたくない場合は
+- I²C、SPI、UART の通常送受信、CAN の `Receive()` はブロッキングです。周期処理を止めたくない場合は
   タイムアウト設計や受信割り込みを検討してください。
 - UART/CAN の受信コールバックは割り込み処理です。共有データをメインループで読む場合は、必要に
   応じて `volatile`、排他、コピーの一貫性を考慮してください。
@@ -710,3 +750,7 @@ PWM と CAN の実際の周波数はクロック設定に依存します。ク�
   GPIO・ADC の重複処理と UART コンソール出力を最適化し、PWM の丸め、長時間計時の
   周回、待機時間の境界条件を修正しました。既存の F4 公開 API は維持しています。
   詳細は [v0.4.0 リリースノート](docs/releases/v0.4.0.md)を参照してください。
+- v0.5.0 (2026-10-23) : F446RE の SPI1/2/3 と F303K8 の SPI1 に対応。
+  8 bit マスターの送信・受信・同時送受信、モード0〜3、MSB/LSB順、タイムアウトを追加しました。
+  SPI の使い方・ピン表、ループバック用サンプル、回帰テストを整備しました。
+  詳細は [v0.5.0 リリースノート](docs/releases/v0.5.0.md)を参照してください。

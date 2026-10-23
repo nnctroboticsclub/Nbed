@@ -12,6 +12,7 @@
 #include "interface/encoder.h"    // IWYU pragma: export
 #include "interface/i2c.h"        // IWYU pragma: export
 #include "interface/pin_names.h"  // IWYU pragma: export
+#include "interface/spi.h"        // IWYU pragma: export
 #include "interface/uart.h"       // IWYU pragma: export
 
 // 初心者向けグローバル名前空間
@@ -21,6 +22,8 @@ using nkrc::nbed::interface::CanMessage;
 using nkrc::nbed::interface::CanRxCallback;
 using nkrc::nbed::interface::CanRxFilter;
 using nkrc::nbed::interface::I2CMessage;
+using nkrc::nbed::interface::SpiBitOrder;
+using nkrc::nbed::interface::SpiMode;
 using nkrc::nbed::interface::UartRxCallback;
 using nkrc::nbed::interface::UartRxMessage;
 using nkrc::nbed::interface::UartTxMessage;
@@ -40,6 +43,7 @@ using namespace std::chrono_literals;
 #include "f4/gpio.h"       // IWYU pragma: export
 #include "f4/i2c.h"        // IWYU pragma: export
 #include "f4/pwm.h"        // IWYU pragma: export
+#include "f4/spi.h"        // IWYU pragma: export
 #include "f4/system.h"     // IWYU pragma: export
 #include "f4/time.h"       // IWYU pragma: export
 #include "f4/uart.h"       // IWYU pragma: export
@@ -54,6 +58,7 @@ using enum nkrc::nbed::stm32::f4::GpioPull;
 using enum nkrc::nbed::stm32::f4::I2cPeripheral;
 using enum nkrc::nbed::stm32::f4::PwmTimer;
 using enum nkrc::nbed::stm32::f4::PwmChannel;
+using enum nkrc::nbed::stm32::f4::SpiPeripheral;
 using enum nkrc::nbed::stm32::f4::UartPeripheral;
 #endif  // NBED_NO_GLOBAL_NAMES
 
@@ -82,6 +87,7 @@ inline void SleepFor(uint32_t ms) {
 #include "f3/gpio.h"       // IWYU pragma: export
 #include "f3/i2c.h"        // IWYU pragma: export
 #include "f3/pwm.h"        // IWYU pragma: export
+#include "f3/spi.h"        // IWYU pragma: export
 #include "f3/system.h"     // IWYU pragma: export
 #include "f3/time.h"       // IWYU pragma: export
 #include "f3/uart.h"       // IWYU pragma: export
@@ -96,6 +102,7 @@ using enum nkrc::nbed::stm32::f3::GpioPull;
 using enum nkrc::nbed::stm32::f3::I2cPeripheral;
 using enum nkrc::nbed::stm32::f3::PwmTimer;
 using enum nkrc::nbed::stm32::f3::PwmChannel;
+using enum nkrc::nbed::stm32::f3::SpiPeripheral;
 using enum nkrc::nbed::stm32::f3::UartPeripheral;
 #endif  // NBED_NO_GLOBAL_NAMES
 
