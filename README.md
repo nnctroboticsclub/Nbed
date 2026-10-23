@@ -1,6 +1,6 @@
-# Nbed
+# nbed
 
-Nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、SPI、UART、CAN、
+nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、SPI、UART、CAN、
 エンコーダを扱うための C++ ライブラリです。STM32 HAL の初期化手順を隠しつつ、使用する
 タイマ・通信機能・ピンをコードに明示して、間違った組み合わせは `Initialize()` の失敗として
 検出します。
@@ -9,15 +9,15 @@ Nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、SPI、UART、CAN�
 F446RE 向けです。F303K8 の設定・ピン表・実機確認手順は
 [F303K8 ガイド](docs/f303k8.md)を参照してください。
 F767ZI の設定・対応ピン・キャッシュとメモリ配置は [F767ZI ガイド](docs/f767zi.md)にあります。
-v0.6.0 はプレリリースです。正規版への移行判断は [v1.0.0 の公開評価](docs/stability.md)を参照してください。
-今回の変更内容と確認結果は[最適化の検証記録](docs/optimization.md)にあります。
+v0.6.1 はプレリリースです。正規版への移行判断は [v1.0.0 の公開評価](docs/stability.md)を参照してください。
+今回の変更内容と確認結果は [v0.6.1 リリースノート](docs/releases/v0.6.1.md)にあります。
 
 初心者はまず `#include "nbed.h"` と `System::Initialize()` だけ覚えれば大丈夫です。  
 こちらの [サンプル](#最初に動かす) にチュートリアルとしてLチカの例があります。
 
 ## 目次
 
-- [Nbed](#nbed)
+- [nbed](#nbed)
   - [目次](#目次)
   - [このリポジトリで開発する](#このリポジトリで開発する)
   - [最初に動かす](#最初に動かす)
@@ -69,8 +69,8 @@ v0.6.0 はプレリリースです。正規版への移行判断は [v1.0.0 の�
 サブモジュールの初期化や、別の Nbed-dev リポジトリは不要です。
 
 ```sh
-git clone https://github.com/nnctroboticsclub/Nbed.git
-cd Nbed
+git clone https://github.com/nnctroboticsclub/nbed.git
+cd nbed
 pio run
 ```
 
@@ -80,8 +80,8 @@ NUCLEO-F446RE に書き込む場合は `pio run -e f4-blink -t upload` を実行
 ほかのサンプルの選び方、全環境のビルド、フォルダ構成は
 [開発ガイド](docs/development.md)を参照してください。
 
-別のアプリケーションから Nbed を使う場合は、従来どおりそのプロジェクトの
-`lib_deps` に Nbed を指定します。設定例は
+別のアプリケーションから nbed を使う場合は、従来どおりそのプロジェクトの
+`lib_deps` に nbed を指定します。設定例は
 [PlatformIO に残す設定](#platformio-に残す設定)にあります。
 
 ## 最初に動かす
@@ -341,7 +341,7 @@ Arduino コネクタの SPI1 に相当します。対応ピン・モード・制
 ```cpp
 #include <cstdio>
 
-printf("Hello, Nbed!\\n");
+printf("Hello, nbed!\\n");
 ```
 
 この既定設定が USART2 を使用中なので、同じ USART2 を自分で初期化する場合は
@@ -392,7 +392,7 @@ if (!device.EnableRxInterrupt()) {
 
 ## CAN
 
-Nbed の CAN は Classic CAN（最大 8 byte/frame）です。NUCLEO のピンだけでは CAN バスに
+nbed の CAN は Classic CAN（最大 8 byte/frame）です。NUCLEO のピンだけでは CAN バスに
 つなげません。**別途 CAN トランシーバ**（例: 3.3 V 対応品）が必要です。CANH/CANL の配線、
 両端の終端抵抗、共通 GND を正しく接続してください。CAN FD には対応していません。
 
@@ -508,7 +508,7 @@ const float radians = target.GetAsRadian();
 
 ## 対応ピン一覧
 
-以下は NUCLEO-F446RE / STM32F446RE で Nbed が受け付ける組み合わせです。表にない
+以下は NUCLEO-F446RE / STM32F446RE で nbed が受け付ける組み合わせです。表にない
 組み合わせを指定すると、初期化は失敗します。
 
 ### 基板上でまず使える信号
@@ -633,7 +633,7 @@ build_flags =
 | `NBED_NO_GLOBAL_NAMES` | `kPA5`、`kTim3`、`DigitalOut`、`CanMessage` などの短い名前をグローバル名前空間へ出さない。 | 大きな C++ プロジェクトで名前の衝突を防ぐ。 |
 | `NBED_NO_GLOBAL_FUNCTIONS` | グローバルの `SleepFor()` を出さない。 | 同名の関数との衝突を防ぐ。 |
 
-Nbed の名前空間は部内共通の `nkrc` 配下に置いています。
+nbed の名前空間は部内共通の `nkrc` 配下に置いています。
 抽象インターフェースは `nkrc::nbed::interface`、STM32F4 の実装は
 `nkrc::nbed::stm32::f4`、単位系とリテラルは `nkrc::nbed` と
 `nkrc::nbed::literals` です。
@@ -657,9 +657,9 @@ nkrc::nbed::stm32::f4::ClockManager::GetClock().Sleep(std::chrono::milliseconds{
 
 ### PlatformIO に残す設定
 
-Nbed の `library.json` は `extra_script.py` を呼び、ライブラリの配置場所に応じて次を自動設定します。
+nbed の `library.json` は `extra_script.py` を呼び、ライブラリの配置場所に応じて次を自動設定します。
 
-- Nbed の `include` ディレクトリを、アプリ・STM32 HAL・ライブラリ自身の検索パスへ追加する。
+- nbed の `include` ディレクトリを、アプリ・STM32 HAL・ライブラリ自身の検索パスへ追加する。
 - F446RE は `-O3`、F303K8 はサイズを抑える `-Os` を使い、LTO、C++23、警告、
   セクション削除、浮動小数点 `printf` を、必要なビルド環境すべてへ
   同じように適用する。
@@ -680,16 +680,16 @@ platform_packages =
   toolchain-gccarmnoneeabi@1.140201.0
   framework-stm32cubef4@1.28.3
 board_build.stm32cube.custom_config_header = yes
-lib_deps = https://github.com/nnctroboticsclub/Nbed.git
+lib_deps = https://github.com/nnctroboticsclub/nbed.git
 ```
 
-`custom_config_header = yes` は、Nbed に同梱した `stm32f4xx_hal_conf.h` を STM32Cube HAL が使う
+`custom_config_header = yes` は、nbed に同梱した `stm32f4xx_hal_conf.h` を STM32Cube HAL が使う
 ための指定です。この一行はライブラリのスクリプトだけでは代替できません。HAL 自身のビルド開始前に
 PlatformIO が読む設定だからです。
 
 上記のバージョンはこの開発リポジトリで検証した組み合わせです。別のバージョンを使う場合も、
 ビルドが通ることと実機での動作を確認してください。最適化・LTO・リンカスクリプトの設定を独自に
-上書きする場合は、Nbed のスクリプトと重複しないよう注意が必要です。
+上書きする場合は、nbed のスクリプトと重複しないよう注意が必要です。
 
 ### クロックを変更する
 
@@ -761,3 +761,7 @@ PWM と CAN の実際の周波数はクロック設定に依存します。ク�
   Arduino ピン名、サンプル、回帰テストを整備しました。
   詳細は [v0.6.0 リリースノート](docs/releases/v0.6.0.md)、
   [正規版公開の評価](docs/stability.md)を参照してください。
+- v0.6.1 (2026-10-23) : リポジトリ名とライブラリ名を `Nbed` から `nbed` に統一。
+  `library.json` にリポジトリ情報を追加し、依存設定・ガイド・VS Code タスク・表示名を更新しました。
+  公開 API・名前空間・`NBED_...` マクロは維持しています。
+  詳細は [v0.6.1 リリースノート](docs/releases/v0.6.1.md)を参照してください。

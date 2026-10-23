@@ -11,7 +11,7 @@ int main() {
   pc.Initialize();
   pc.SetConsole();
 
-  Logger::Info("test", "Nbed F446RE UART test started");
+  Logger::Info("test", "nbed F446RE UART test started");
 
   pc.SetRxCallback([&pc](UartRxMessage message) { pc.Send(message); });
   pc.EnableRxInterrupt();

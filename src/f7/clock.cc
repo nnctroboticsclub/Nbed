@@ -158,7 +158,7 @@ bool Clock::Initialize(const Configuration& configuration) {
     osc.PLL.PLLP = RCC_PLLP_DIV8;
   }
   osc.PLL.PLLQ = configuration.pll_q;
-  osc.PLL.PLLR = 2;  // Not used by Nbed's peripherals.
+  osc.PLL.PLLR = 2;  // Not used by nbed's peripherals.
   const uint64_t source_hz =
       configuration.oscillator_source == OscillatorSource::kHse
           ? static_cast<uint64_t>(configuration.hse_frequency_hz)

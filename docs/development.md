@@ -1,15 +1,15 @@
-# Nbed 開発ガイド
+# nbed 開発ガイド
 
 ## フォルダ構成
 
 ```text
-Nbed/
+nbed/
 ├── library.json          # 配布するライブラリの定義と logger 依存
 ├── include/              # 公開ヘッダと HAL 設定
 ├── src/                  # ライブラリ本体
 ├── linker/               # リンカスクリプト
 ├── extra_script.py       # 利用側にも適用するライブラリのビルド設定
-├── platformio.ini        # Nbed 自体を開発するための PlatformIO 設定
+├── platformio.ini        # nbed 自体を開発するための PlatformIO 設定
 ├── examples/             # 開発・実機確認用プログラム
 ├── scripts/compiledb.py  # 開発用 clangd ビルド情報の生成
 ├── docs/                 # 開発資料
@@ -20,7 +20,7 @@ Nbed/
 `platformio.ini` の `src_dir = examples` と環境ごとのソースフィルタにより、
 選んだサンプルだけをアプリケーションとしてビルドします。
 
-`lib_deps = Nbed=symlink://.` は、このフォルダ自体を Nbed ライブラリとして参照する指定です。
+`lib_deps = nbed=symlink://.` は、このフォルダ自体を nbed ライブラリとして参照する指定です。
 コピーを作らないため、`include/`・`src/`・`extra_script.py` の変更が直接反映されます。
 Windows の管理者権限や、OS のシンボリックリンク作成権限は必要ありません。
 logger は `library.json` の依存関係から自動的にインストールされます。
@@ -155,7 +155,7 @@ DB 統合処理は yamamoto-mdc の改良版 `extra_script.py` の方式を取�
 `--query-driver` を通して C++ 標準ヘッダの場所を取得できるようにするためです。
 ユーザー名などの実パスは生成物だけに記録し、共有設定には固定しません。
 
-`chrono` などが見つからない場合は、VS Code の「Nbed: clangd用ビルド情報を更新（既定環境）」タスク、
+`chrono` などが見つからない場合は、VS Code の「nbed: clangd用ビルド情報を更新（既定環境）」タスク、
 または次のコマンドでビルド情報を再生成します。
 
 ```sh
@@ -168,9 +168,9 @@ VS Code のタスクは `V:/7_script/vscode/projects/robotics/.vscode/tasks.json
 `Ctrl+Shift+B` は `platformio.ini` の `default_envs` をビルドし、現在の対象は `f4-blink` です。
 通常ビルド・書き込み・ビルド情報の更新・通常クリーンに加え、次のタスクを使えます。
 
-- 「Nbed: 生成物とキャッシュを全削除」: 全環境の `build/`・`.cache/`・旧 `.pio/build/` とルートの生成DBを削除。
-- 「Nbed: 完全再ビルド（既定環境）」: 全削除が成功してから既定環境をビルド。
-- 「Nbed: シリアルモニター（LED点滅）」: 従来どおり `f4-blink` のシリアル設定で接続。
+- 「nbed: 生成物とキャッシュを全削除」: 全環境の `build/`・`.cache/`・旧 `.pio/build/` とルートの生成DBを削除。
+- 「nbed: 完全再ビルド（既定環境）」: 全削除が成功してから既定環境をビルド。
+- 「nbed: シリアルモニター（LED点滅）」: 従来どおり `f4-blink` のシリアル設定で接続。
 
 全削除には `.vscode/clean.py` を使い、`.pio/libdeps/`、`include/`、`src/`、`examples/` は保持します。
 全環境のビルド結果を消しますが、再ビルドするのは既定環境だけです。
@@ -186,11 +186,18 @@ PlatformIO のターミナルからも同じ操作を実行できます。
 Git リポジトリには開発環境も保存されます。
 
 ```sh
-pio pkg pack . --output build/Nbed.tar.gz
+pio pkg pack . --output build/nbed.tar.gz
 ```
 
 ライブラリ利用側の設定は [README](../README.md#platformio-に残す設定)を参照してください。
 利用側で開発用の `scripts/compiledb.py` を指定する必要はありません。
+
+## リポジトリ名の変更
+
+2026年10月23日に、リポジトリ名とライブラリ名を `Nbed` から `nbed` に変更しました。
+GitHub 上の既存リポジトリをリネームし、コミット履歴・ブランチ・タグ・リリースを引き継いでいます。
+利用側の `lib_deps` と既存の clone の接続先は `https://github.com/nnctroboticsclub/nbed.git` に更新してください。
+過去のリリース文書と移行時の検証記録は、当時の名称・パスを残しています。
 
 ## Nbed-dev からの移行
 
@@ -199,7 +206,7 @@ pio pkg pack . --output build/Nbed.tar.gz
 環境名とコードはそのまま引き継いでいます。
 移行前の README にあった未コミットのリンク修正と、VS Code の共有設定も反映しています。
 
-今後は、この Nbed フォルダ内でライブラリ・サンプル・開発設定をまとめて変更・コミットします。
+今後は、この nbed フォルダ内でライブラリ・サンプル・開発設定をまとめて変更・コミットします。
 旧 Nbed-dev とその中の Nbed サブモジュールは別の作業コピーなので、自動同期はされません。
 
 移行時の確認項目と結果は [統合の検証結果](migration-verification.md)にまとめています。

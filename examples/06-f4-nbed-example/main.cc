@@ -1,6 +1,6 @@
 #include <cstdio>  // printf用
 
-#include "nbed.h"  // Nbedライブラリ (この中に複数のヘッダーファイルが含まれている)
+#include "nbed.h"  // nbedライブラリ (この中に複数のヘッダーファイルが含まれている)
 
 // ---------- デジタル入出力の例 ----------
 void DigitalExample() {

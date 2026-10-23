@@ -1,4 +1,4 @@
-"""Apply MCU-specific build settings carried by the Nbed library."""
+"""Apply MCU-specific build settings carried by the nbed library."""
 
 from os.path import join, realpath
 
@@ -15,7 +15,7 @@ LINKER_SCRIPTS = {
   "stm32f767zit6": "STM32F767ZITX_FLASH.ld",
 }
 if MCU not in LINKER_SCRIPTS:
-  raise ValueError("Nbed does not support MCU: " + MCU)
+  raise ValueError("nbed does not support MCU: " + MCU)
 LDSCRIPT_PATH = join(LIBRARY_DIR, "linker", LINKER_SCRIPTS[MCU])
 FAMILY = {"stm32f303k8t6": "f3", "stm32f446ret6": "f4",
           "stm32f767zit6": "f7"}[MCU]
@@ -43,7 +43,7 @@ UNFLAGS = [
 
 
 def configure_build_environment(build_env):
-  """Make one PlatformIO build environment use the Nbed defaults."""
+  """Make one PlatformIO build environment use the nbed defaults."""
   for flag in UNFLAGS:
     build_env.ProcessUnFlags(flag)
 
@@ -51,7 +51,7 @@ def configure_build_environment(build_env):
   build_env.Prepend(CPPPATH=[INCLUDE_DIR])
 
 
-# The library environment builds Nbed itself. The global and project
+# The library environment builds nbed itself. The global and project
 # environments make the same settings available to the HAL and application.
 configure_build_environment(env)  # pyright: ignore[reportUndefinedVariable]
 configure_build_environment(projenv)  # pyright: ignore[reportUndefinedVariable]

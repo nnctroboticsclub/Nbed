@@ -11,7 +11,7 @@
   // -e を指定せず platformio.ini の default_envs に従う。
   "tasks": [
     {
-      "label": "Nbed: ビルド（既定環境）",
+      "label": "nbed: ビルド（既定環境）",
       "type": "process",
       "command": "${userHome}/.platformio/penv/bin/platformio",
       "windows": {
@@ -23,7 +23,7 @@
       "detail": "platformio.ini の default_envs をビルド。Ctrl+Shift+B。"
     },
     {
-      "label": "Nbed: 書き込み（既定環境）",
+      "label": "nbed: 書き込み（既定環境）",
       "type": "process",
       "command": "${userHome}/.platformio/penv/bin/platformio",
       "windows": {
@@ -34,7 +34,7 @@
       "detail": "既定環境をビルドして実機へ書き込む。"
     },
     {
-      "label": "Nbed: シリアルモニター（LED点滅）",
+      "label": "nbed: シリアルモニター（LED点滅）",
       "type": "process",
       "command": "${userHome}/.platformio/penv/bin/platformio",
       "windows": {
@@ -51,7 +51,7 @@
       "detail": "LED点滅サンプル f4-blink のシリアル設定で接続する。"
     },
     {
-      "label": "Nbed: clangd用ビルド情報を更新（既定環境）",
+      "label": "nbed: clangd用ビルド情報を更新（既定環境）",
       "type": "process",
       "command": "${userHome}/.platformio/penv/bin/platformio",
       "windows": {
@@ -62,7 +62,7 @@
       "detail": "ファームウェアをコンパイルせず compile_commands.json を再生成する。"
     },
     {
-      "label": "Nbed: クリーン（既定環境）",
+      "label": "nbed: クリーン（既定環境）",
       "type": "process",
       "command": "${userHome}/.platformio/penv/bin/platformio",
       "windows": {
@@ -73,7 +73,7 @@
       "detail": "PlatformIO の通常クリーン。共有ビルドキャッシュは残す。"
     },
     {
-      "label": "Nbed: 生成物とキャッシュを全削除",
+      "label": "nbed: 生成物とキャッシュを全削除",
       "type": "process",
       "command": "${userHome}/.platformio/penv/bin/python",
       "windows": {
@@ -84,11 +84,11 @@
       "detail": "全環境の build/・.cache/・旧 .pio/build/ とルートの生成DBを削除する。"
     },
     {
-      "label": "Nbed: 完全再ビルド（既定環境）",
+      "label": "nbed: 完全再ビルド（既定環境）",
       "dependsOrder": "sequence",
       "dependsOn": [
-        "Nbed: 生成物とキャッシュを全削除",
-        "Nbed: ビルド（既定環境）"
+        "nbed: 生成物とキャッシュを全削除",
+        "nbed: ビルド（既定環境）"
       ],
       "group": "build",
       "problemMatcher": [],

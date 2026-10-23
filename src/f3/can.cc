@@ -36,7 +36,7 @@ bool IsCan1Pins(interface::PinName rx, interface::PinName tx) {
 }
 
 void DisableGpioClock(GPIO_TypeDef* port) {
-  // GPIO clocks may be shared by other Nbed peripherals, so intentionally do
+  // GPIO clocks may be shared by other nbed peripherals, so intentionally do
   // not disable them during CAN teardown.
   (void)port;
 }

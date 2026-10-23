@@ -110,7 +110,7 @@ int main() {
 
   bool passed = true;
 
-  Logger::Info("test", "Nbed F446RE hardware test started");
+  Logger::Info("test", "nbed F446RE hardware test started");
   Logger::Value("clock", "SYSCLK: %lu, HCLK: %lu, PCLK1: %lu, PCLK2: %lu",
                 static_cast<unsigned long>(Clock::SystemClockHz()),
                 static_cast<unsigned long>(Clock::HclkHz()),
@@ -151,11 +151,11 @@ int main() {
   passed = TimerTest(timer) && passed;
 
   if (!passed) {
-    Logger::Error("test", "Nbed hardware test failed");
+    Logger::Error("test", "nbed hardware test failed");
     System::ErrorHandler();
   }
 
-  Logger::Info("test", "Nbed hardware test passed");
+  Logger::Info("test", "nbed hardware test passed");
 
   while (true) {
     led = !led.Read();

@@ -1,7 +1,7 @@
 {
-  "name": "Nbed",
-  "version": "0.6.0",
-  "description": "Nbedは、長岡高専ロボティクス部が2026年に開発したSTM32シリーズ向けのマイコン制御ライブラリです。STM32 HALをより簡単かつ扱いやすく利用できるようにすることを目的として開発されています。",
+  "name": "nbed",
+  "version": "0.6.1",
+  "description": "nbedは、長岡高専ロボティクス部が2026年に開発したSTM32シリーズ向けのマイコン制御ライブラリです。STM32 HALをより簡単かつ扱いやすく利用できるようにすることを目的として開発されています。",
   "keywords": [
     "stm32",
     "stm32f4",
@@ -18,6 +18,10 @@
   "platforms": [
     "ststm32"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nnctroboticsclub/nbed.git"
+  },
   "dependencies": {
     "logger": "https://github.com/nnctroboticsclub/logger/archive/refs/tags/v0.3.0.zip"
   },
