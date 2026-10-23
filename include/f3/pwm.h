@@ -10,7 +10,7 @@
 
 namespace nkrc::nbed::stm32::f3 {
 
-enum class PwmTimer : uint8_t { kTim1, kTim2, kTim3 };
+enum class PwmTimer : uint8_t { kTim1, kTim2, kTim3, kTim15, kTim16, kTim17 };
 enum class PwmChannel : uint8_t { kCh1, kCh2, kCh3, kCh4 };
 
 // A PWM output. Channels on the same timer necessarily share a frequency.

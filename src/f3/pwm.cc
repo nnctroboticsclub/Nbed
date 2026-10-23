@@ -29,11 +29,20 @@ Pwm::TimerState& StateOf(PwmTimer timer) {
   static Pwm::TimerState tim1{};
   static Pwm::TimerState tim2{};
   static Pwm::TimerState tim3{};
+  static Pwm::TimerState tim15{};
+  static Pwm::TimerState tim16{};
+  static Pwm::TimerState tim17{};
   switch (timer) {
     case PwmTimer::kTim1:
       return tim1;
     case PwmTimer::kTim2:
       return tim2;
+    case PwmTimer::kTim15:
+      return tim15;
+    case PwmTimer::kTim16:
+      return tim16;
+    case PwmTimer::kTim17:
+      return tim17;
     default:
       return tim3;
   }
@@ -45,6 +54,12 @@ TIM_TypeDef* InstanceOf(PwmTimer timer) {
       return TIM1;
     case PwmTimer::kTim2:
       return TIM2;
+    case PwmTimer::kTim15:
+      return TIM15;
+    case PwmTimer::kTim16:
+      return TIM16;
+    case PwmTimer::kTim17:
+      return TIM17;
     default:
       return TIM3;
   }
@@ -64,7 +79,7 @@ constexpr uint8_t ChannelBit(PwmChannel channel) {
   return 0;
 }
 
-// TIM2のみ32bit、TIM1/TIM3は16bit。
+// TIM2のみ32bit、TIM1/TIM3/TIM15/TIM16/TIM17は16bit。
 constexpr uint32_t MaxPeriod(PwmTimer timer) {
   return timer == PwmTimer::kTim2 ? 0xFFFFFFFFU : 0xFFFFU;
 }
@@ -79,6 +94,15 @@ void EnableTimerClock(PwmTimer timer) {
       break;
     case PwmTimer::kTim3:
       __HAL_RCC_TIM3_CLK_ENABLE();
+      break;
+    case PwmTimer::kTim15:
+      __HAL_RCC_TIM15_CLK_ENABLE();
+      break;
+    case PwmTimer::kTim16:
+      __HAL_RCC_TIM16_CLK_ENABLE();
+      break;
+    case PwmTimer::kTim17:
+      __HAL_RCC_TIM17_CLK_ENABLE();
       break;
   }
 }
@@ -329,11 +353,30 @@ bool Pwm::IsValidPin() const {
              (channel_ == PwmChannel::kCh3 && pin_ == PinName::kPB0) ||
              (channel_ == PwmChannel::kCh4 &&
               (pin_ == PinName::kPB1 || pin_ == PinName::kPB7));
+    case PwmTimer::kTim15:
+      return (channel_ == PwmChannel::kCh1 && pin_ == PinName::kPA2) ||
+             (channel_ == PwmChannel::kCh2 && pin_ == PinName::kPA3);
+    case PwmTimer::kTim16:
+      return channel_ == PwmChannel::kCh1 &&
+             (pin_ == PinName::kPA6 || pin_ == PinName::kPA12 ||
+              pin_ == PinName::kPB4);
+    case PwmTimer::kTim17:
+      return channel_ == PwmChannel::kCh1 &&
+             (pin_ == PinName::kPA7 || pin_ == PinName::kPB5);
   }
   return false;
 }
 
 uint32_t Pwm::AlternateFunction() const {
+  if (timer_ == PwmTimer::kTim15) {
+    return GPIO_AF9_TIM15;
+  }
+  if (timer_ == PwmTimer::kTim16) {
+    return GPIO_AF1_TIM16;
+  }
+  if (timer_ == PwmTimer::kTim17) {
+    return pin_ == interface::PinName::kPB5 ? GPIO_AF10_TIM17 : GPIO_AF1_TIM17;
+  }
   if (timer_ == PwmTimer::kTim1) {
     return channel_ == PwmChannel::kCh4 ? GPIO_AF11_TIM1 : GPIO_AF6_TIM1;
   }
@@ -349,7 +392,7 @@ uint32_t Pwm::TimerClockHz() const {
   RCC_ClkInitTypeDef clock_config{};
   uint32_t flash_latency = 0;
   HAL_RCC_GetClockConfig(&clock_config, &flash_latency);
-  const bool apb2 = timer_ == PwmTimer::kTim1;
+  const bool apb2 = timer_ != PwmTimer::kTim2 && timer_ != PwmTimer::kTim3;
   const uint32_t pclk = apb2 ? HAL_RCC_GetPCLK2Freq() : HAL_RCC_GetPCLK1Freq();
   const uint32_t divider =
       apb2 ? clock_config.APB2CLKDivider : clock_config.APB1CLKDivider;
