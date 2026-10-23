@@ -77,6 +77,9 @@ pio device monitor -e f4-blink
 | `f7-blink` | F767ZI の PB0 LED・既定 USART3 コンソール |
 | `f7-all-test` | F767ZI の各機能・CAN1 内部ループバック |
 | `f7-spi-test` | F767ZI の SPI1 ループバック（PB5–PA6 を接続） |
+| `f3-pwm-complementary` | F303K8 の TIM15 CH1/CH1N（PA2/PA1） |
+| `f4-pwm-complementary` | F446RE の TIM1 CH1/CH1N（PA8/PA7） |
+| `f7-pwm-complementary` | F767ZI の TIM1 CH1/CH1N（PE9/PE8） |
 
 F303K8 の配線・クロック・ピン表は [F303K8 ガイド](f303k8.md)を参照してください。
 F767ZI の設定・ピン表・検証条件は [F767ZI ガイド](f767zi.md)を参照してください。
@@ -91,10 +94,10 @@ UART・CAN・アナログ入力などの例には、それぞれに合う配線�
 サンプルのピン指定と [ライブラリガイド](../README.md)を確認してから書き込んでください。
 `00-f4-all-test` と `04-f4-uart-test` の `NBED_NO_DEFAULT_SERIAL` は移行元から引き継いでいます。
 
-全16環境をビルドするには、既定環境を上書きして実行します。
+全19環境をビルドするには、既定環境を上書きして実行します。
 
 ```sh
-pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test -e 03-f4-pwm-test -e 04-f4-uart-test -e 05-f4-can-test -e 06-f4-nbed-example -e f3-blink -e f3-all-test -e f3-pwm-test -e f4-spi-test -e f3-spi-test -e f7-blink -e f7-all-test -e f7-spi-test
+pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test -e 03-f4-pwm-test -e 04-f4-uart-test -e 05-f4-can-test -e 06-f4-nbed-example -e f3-blink -e f3-all-test -e f3-pwm-test -e f4-spi-test -e f3-spi-test -e f7-blink -e f7-all-test -e f7-spi-test -e f3-pwm-complementary -e f4-pwm-complementary -e f7-pwm-complementary
 ```
 
 これらは実機確認用プログラムです。ビルドの成功だけでは実機の動作確認は完了しません。
@@ -119,6 +122,9 @@ HAL を小さな代替実装に置き換え、全ピン値の判定、GPIO、タ
 ピン設定・バッファ境界・所有権・送受信とエラーを確認します。
 F3 の PWM では TIM15/16/17 の全ピン候補と AF、チャンネル数・重複予約、周波数共有、
 APB の分周、デューティ比・パルス幅・周波数変更、HAL 失敗後の再初期化も確認します。
+F3/F4/F7 の出力設定テストは、N 出力の全ピン候補、ペアの所有権、極性・アイドル・デッドタイムの
+HAL 設定値、設定の競合、開始失敗時の解放と別チャンネルを保った停止も確認します。
+相補出力の実機確認用サンプルと設定例は [PWM 出力設定ガイド](pwm.md)にあります。
 F7 ではクロック・Flash 待機数・OverDrive、I²C の HSI16 タイミングと所有権、ADC1/ADC3 の
 独立したチャンネルキャッシュ、DWT のアンロック、USART3/6 と F7 固有の SPI ピンも確認します。
 実機での波形・通信確認は別途必要です。

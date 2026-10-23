@@ -11,7 +11,7 @@
 namespace nkrc::nbed::stm32::f3 {
 
 enum class PwmTimer : uint8_t { kTim1, kTim2, kTim3, kTim15, kTim16, kTim17 };
-enum class PwmChannel : uint8_t { kCh1, kCh2, kCh3, kCh4 };
+enum class PwmChannel : uint8_t { kCh1, kCh2, kCh3, kCh4, kCh1N, kCh2N, kCh3N };
 
 // A PWM output. Channels on the same timer necessarily share a frequency.
 class Pwm final : public interface::Pwm {
@@ -20,8 +20,24 @@ class Pwm final : public interface::Pwm {
   // one state object per hardware timer.
   struct TimerState;
 
+  struct Configuration {
+    // For a CHx + CHxN pair, keep one owner of their shared compare register.
+    interface::PinName complementary_pin{interface::PinName::kNC};
+    uint32_t polarity{TIM_OCPOLARITY_HIGH};
+    uint32_t complementary_polarity{TIM_OCNPOLARITY_HIGH};
+    uint32_t idle_state{TIM_OCIDLESTATE_RESET};
+    uint32_t complementary_idle_state{TIM_OCNIDLESTATE_RESET};
+    // HAL DeadTime / DTG encoding, 0..255 (not a duration in nanoseconds).
+    // All channels on one timer must specify the same value.
+    uint32_t dead_time{0};
+    uint32_t off_state_run_mode{TIM_OSSR_DISABLE};
+    uint32_t off_state_idle_mode{TIM_OSSI_DISABLE};
+  };
+
   Pwm(PwmTimer timer, PwmChannel channel, interface::PinName pin,
       uint32_t frequency_hz = 50);
+  Pwm(PwmTimer timer, PwmChannel channel, interface::PinName pin,
+      uint32_t frequency_hz, const Configuration& configuration);
   ~Pwm() override;
   Pwm(const Pwm&) = delete;
   Pwm& operator=(const Pwm&) = delete;
@@ -44,6 +60,9 @@ class Pwm final : public interface::Pwm {
   [[nodiscard]] TimerState& State() const;
   [[nodiscard]] uint32_t HalChannel() const;
   [[nodiscard]] bool IsValidPin() const;
+  [[nodiscard]] bool IsValidConfiguration() const;
+  [[nodiscard]] bool IsValidComplementaryPin(interface::PinName pin) const;
+  [[nodiscard]] uint32_t ComplementaryAlternateFunction() const;
   [[nodiscard]] uint32_t AlternateFunction() const;
   [[nodiscard]] uint32_t TimerClockHz() const;
 
@@ -51,6 +70,7 @@ class Pwm final : public interface::Pwm {
   PwmChannel channel_;
   interface::PinName pin_;
   uint32_t frequency_hz_;
+  Configuration configuration_{};
   bool initialized_{false};
 };
 
