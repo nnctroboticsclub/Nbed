@@ -6,11 +6,15 @@
 
 // Disconnect external SPI devices, then connect MOSI to MISO:
 // F446RE: PA7 (D11) -> PA6 (D12); F303K8: PB5 (D11) -> PB4 (D12).
-// SCK shares the board LED pin. Do not initialize a separate LED output.
+// F767ZI: PB5 (Zio D22 / Morpho) -> PA6 (D12). PB5 avoids the Ethernet
+// PHY connection on PA7 (default D11). See docs/f767zi.md for solder bridges.
+// F446RE/F303K8: SCK shares the LED pin; do not initialize a separate LED output.
 int main() {
   System::Initialize();
 #if defined(STM32F303x8)
   Spi spi(kSpi1, kPB3, kPB4, kPB5, 1'000'000);
+#elif defined(STM32F767xx)
+  Spi spi(kSpi1, kPA5, kPA6, kPB5, 1'000'000);
 #else
   Spi spi(kSpi1, kPA5, kPA6, kPA7, 1'000'000);
 #endif

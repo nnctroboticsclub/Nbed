@@ -15,6 +15,13 @@
 #include "f3/timer_reservation.h"
 #include "f3/uart.h"
 namespace device = nkrc::nbed::stm32::f3;
+#elif defined(STM32F767xx)
+#include "f7/gpio.h"
+#include "f7/pin_mapper.h"
+#include "f7/time.h"
+#include "f7/timer_reservation.h"
+#include "f7/uart.h"
+namespace device = nkrc::nbed::stm32::f7;
 #else
 #include "f4/gpio.h"
 #include "f4/pin_mapper.h"
@@ -71,6 +78,8 @@ int main() {
         port == 0 ||
         (port == 1 && (index <= 1 || (index >= 3 && index <= 7))) ||
         (port == 5 && index <= 1);
+#elif defined(STM32F767xx)
+    const bool expected = port <= 6 || (port == 7 && index <= 1);
 #else
     const bool expected =
         port == 0 || port == 2 || (port == 1 && index != 11) ||
@@ -142,6 +151,13 @@ int main() {
 
   hal_tick = 123;
   assert(Time::Initialize());
+#ifdef STM32F767xx
+  assert(DWT->LAR == 0xC5ACCE55U);
+  static_assert(PinName::kD0 == PinName::kPG9);
+  static_assert(PinName::kD11 == PinName::kPA7);
+  static_assert(PinName::kD13 == PinName::kPA5);
+  static_assert(PinName::kA3 == PinName::kPF3);
+#endif
   DWT->CYCCNT = 32'000;
   assert(Time::Microseconds() == 123'500);
   // Interrupt after reading the old cycle baseline forces a consistent retry.
@@ -193,4 +209,12 @@ int main() {
   tx_sizes.clear();
   fail_tx_call = 2;
   assert(_write(1, message.data(), 65552) == 65535);
+#ifdef STM32F767xx
+  Uart console(UartPeripheral::kUsart3, PinName::kPD9, PinName::kPD8);
+  assert(console.Initialize() && console.GetHandle().Instance == USART3);
+  Uart arduino(UartPeripheral::kUsart6, PinName::kD0, PinName::kD1);
+  assert(arduino.Initialize() && arduino.GetHandle().Instance == USART6);
+  Uart wrong_pin(UartPeripheral::kUsart3, PinName::kPC5, PinName::kPB10);
+  assert(!wrong_pin.Initialize());
+#endif
 }

@@ -13,6 +13,8 @@
 #include "stm32f3xx_hal.h"
 #elif defined(STM32F446xx)
 #include "stm32f4xx_hal.h"
+#elif defined(STM32F767xx)
+#include "stm32f7xx_hal.h"
 #endif
 
 namespace nkrc::nbed::detail {

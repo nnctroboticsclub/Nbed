@@ -273,6 +273,31 @@ enum class PinName : std::uint8_t {
   kPH0 = 0x70,
   kPH1 = 0x71,
 
+  // NUCLEO-F767ZI Arduino/Zio aliases (D11 default route: PA7).
+  kD0 = kPG9,
+  kD1 = kPG14,
+  kD2 = kPF15,
+  kD3 = kPE13,
+  kD4 = kPF14,
+  kD5 = kPE11,
+  kD6 = kPE9,
+  kD7 = kPF13,
+  kD8 = kPF12,
+  kD9 = kPD15,
+  kD10 = kPD14,
+  kD11 = kPA7,
+  kD12 = kPA6,
+  kD13 = kPA5,
+  kD14 = kPB9,
+  kD15 = kPB8,
+
+  kA0 = kPA3,
+  kA1 = kPC0,
+  kA2 = kPC3,
+  kA3 = kPF3,
+  kA4 = kPF5,
+  kA5 = kPF10,
+
   kNC = 0xFF,
 };
 #endif

@@ -12,11 +12,13 @@ MCU = env.BoardConfig().get("build.mcu", "").lower()  # pyright: ignore[reportUn
 LINKER_SCRIPTS = {
   "stm32f446ret6": "STM32F446RETX_FLASH.ld",
   "stm32f303k8t6": "STM32F303K8TX_FLASH.ld",
+  "stm32f767zit6": "STM32F767ZITX_FLASH.ld",
 }
 if MCU not in LINKER_SCRIPTS:
   raise ValueError("Nbed does not support MCU: " + MCU)
 LDSCRIPT_PATH = join(LIBRARY_DIR, "linker", LINKER_SCRIPTS[MCU])
-FAMILY = "f3" if MCU == "stm32f303k8t6" else "f4"
+FAMILY = {"stm32f303k8t6": "f3", "stm32f446ret6": "f4",
+          "stm32f767zit6": "f7"}[MCU]
 # Select only this MCU's implementation. This also keeps clangd's compile
 # database from replacing F3 entries with empty F4 compilations, or vice versa.
 env.Replace(SRC_FILTER=["-<*>", "+<" + FAMILY + "/>"])  # pyright: ignore[reportUndefinedVariable]

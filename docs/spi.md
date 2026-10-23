@@ -1,6 +1,6 @@
 # SPI
 
-F446RE と F303K8 で、8 bit・全二重の SPI マスターを使用できます。
+F446RE、F303K8、F767ZI で、8 bit・全二重の SPI マスターを使用できます。
 `#include "nbed.h"` から `Spi`、`SpiPeripheral`、`SpiMode`、`SpiBitOrder` を使います。
 同じ SPI を複数のオブジェクトが初期化することはできません。複数の機器をつなぐ場合は、
 1 個の `Spi` と機器ごとの CS 出力を使い、同時に選択する機器を 1 個にします。
@@ -93,8 +93,11 @@ CRC、ハードウェア NSS、MISO/MOSI の省略には対応していません
 | F446RE SPI1 | PCLK2 | 45 MHz |
 | F446RE SPI2 / SPI3 | PCLK1 | 22.5 MHz |
 | F303K8 SPI1 | PCLK2 | 24 MHz |
+| F767ZI SPI1 | PCLK2 | 54 MHz |
+| F767ZI SPI2 / SPI3 | PCLK1 | 27 MHz |
 
 既定のクロックで 1 MHz を指定した場合、F446RE は 703125 Hz、F303K8 は 1 MHz です。
+F767ZI では 1 MHz の指定が843750 Hzになります。
 F303K8 の既定クロックでの最大実速度は 16 MHz です。相手の上限や配線条件に合う値を指定し、
 `System::Initialize()` とクロック設定を済ませてから SPI を初期化してください。
 初期化後にクロックを変更する場合は SPI も作り直します。
@@ -110,9 +113,15 @@ SWD、UART、PWM などと同じピンを同時に使用しないでください
 | F446RE | `kSpi2` | PA9 / PB10 / PB13 / PC7 | PB14 / PC2 | PB15 / PC1 / PC3 |
 | F446RE | `kSpi3` | PB3 / PC10 | PB4 / PC11 | PB0 / PB2 / PB5 / PC1 / PC12 |
 | F303K8 | `kSpi1` | PA5 / PB3 | PA6 / PB4 | PA7 / PB5 |
+| F767ZI | `kSpi1` | PA5 / PB3 / PG11 | PA6 / PB4 / PG9 | PA7 / PB5 / PD7 |
+| F767ZI | `kSpi2` | PA9 / PA12 / PB10 / PB13 / PD3 | PB14 / PC2 | PB15 / PC1 / PC3 |
+| F767ZI | `kSpi3` | PB3 / PC10 | PB4 / PC11 | PB2 / PB5 / PC12 / PD6 |
 
 F446RE の Arduino D13/D12/D11 は PA5/PA6/PA7、F303K8 は PB3/PB4/PB5 です。
-それぞれ SCK は基板上 LED と共用なので、SPI 使用中は LED 用 `DigitalOut` を作りません。
+F446RE と F303K8 の SCK は基板上 LED と共用なので、SPI 使用中は LED 用 `DigitalOut` を作りません。
+F767ZI の D13/D12/D11 は PA5/PA6/PA7 を想定し、既定の LD1 は PB0 です。
+F767ZI の PA7 は Ethernet PHY と接続されているため、SPI 出力の配線を確認してください。
+F767ZI のループバック例は PB5（Zio D22 / Morpho）を MOSI に使用します。
 PB3/PB4 の SPI 使用中は JTAG・SWO とも競合します（PA13/PA14 の SWD は別です）。
 F303K8 の PA5/PA6 は SB16/SB18 により PB7/PB6 と接続される場合があります。
 I²C などと併用する際はボードのはんだブリッジ設定を確認してください。
@@ -120,7 +129,9 @@ I²C などと併用する際はボードのはんだブリッジ設定を確認
 ## ループバック確認
 
 外部 SPI 機器を外し、D11（MOSI）と D12（MISO）をジャンパで接続します。
-F446RE は PA7–PA6、F303K8 は PB5–PB4 です。サンプルは CS に D10 を使います。
+F446RE は PA7–PA6、F303K8 は PB5–PB4 です。
+F767ZI は D11 の代わりに PB5（Zio D22 / Morpho）を選び、PA6（D12）へ接続します。
+サンプルは CS に D10 を使います。
 
 ```sh
 pio run -e f4-spi-test
@@ -129,6 +140,8 @@ pio device monitor -e f4-spi-test
 ```
 
 F303K8 では環境名を `f3-spi-test` に変えます。成功時には `SPI loopback: PASS` が表示されます。
+F767ZI では `f7-spi-test` を使用します。基板上の Ethernet/USB などとの競合と
+はんだブリッジについては [F767ZI ガイド](f767zi.md)を参照してください。
 サンプルは同時送受信のデータ一致、送信、受信時のダミー送信を確認します。
 2026-10-23 に全12環境のビルドとホスト上の回帰テスト28件が成功しました。
 既存の任意実行の PlatformIO 統合テスト8件はスキップしています。

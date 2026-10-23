@@ -5,9 +5,11 @@ Nbed は、**STM32シリーズ** で GPIO、ADC、PWM、I²C、SPI、UART、CAN�
 タイマ・通信機能・ピンをコードに明示して、間違った組み合わせは `Initialize()` の失敗として
 検出します。
 
-対応ボードは **NUCLEO-F446RE / NUCLEO-F303K8** です。このページの基本例と対応ピン表は
+対応ボードは **NUCLEO-F446RE / NUCLEO-F303K8 / NUCLEO-F767ZI** です。このページの基本例と対応ピン表は
 F446RE 向けです。F303K8 の設定・ピン表・実機確認手順は
 [F303K8 ガイド](docs/f303k8.md)を参照してください。
+F767ZI の設定・対応ピン・キャッシュとメモリ配置は [F767ZI ガイド](docs/f767zi.md)にあります。
+v0.6.0 はプレリリースです。正規版への移行判断は [v1.0.0 の公開評価](docs/stability.md)を参照してください。
 今回の変更内容と確認結果は[最適化の検証記録](docs/optimization.md)にあります。
 
 初心者はまず `#include "nbed.h"` と `System::Initialize()` だけ覚えれば大丈夫です。  
@@ -711,8 +713,8 @@ PWM と CAN の実際の周波数はクロック設定に依存します。ク�
 
 ## 制約と未対応機能
 
-- 対象 MCU は STM32F446RE と STM32F303K8（LQFP32）です。ほかの STM32F3/F4/F7 は
-  未対応です。F3 の名前空間は `nkrc::nbed::stm32::f3` です。
+- 対象 MCU は STM32F446RE、STM32F303K8（LQFP32）、STM32F767ZI（LQFP144）です。
+  ほかの STM32 型番は未対応です。F3/F7 の名前空間は `nkrc::nbed::stm32::f3` / `nkrc::nbed::stm32::f7` です。
 - 外部割り込み、ADC DMA、UART DMA、SPI DMA・割り込み転送・スレーブはこの API では提供していません。
 - `Pwm::SendDataDma()` は将来の拡張用 API です。現版ではデータを出力しないため、使用しないで
   ください。
@@ -754,3 +756,8 @@ PWM と CAN の実際の周波数はクロック設定に依存します。ク�
   8 bit マスターの送信・受信・同時送受信、モード0〜3、MSB/LSB順、タイムアウトを追加しました。
   SPI の使い方・ピン表、ループバック用サンプル、回帰テストを整備しました。
   詳細は [v0.5.0 リリースノート](docs/releases/v0.5.0.md)を参照してください。
+- v0.6.0 (2026-10-23) : STM32F767ZI 向けに GPIO、ADC1/ADC3、PWM、I²C、SPI、UART、
+  Classic CAN、エンコーダ、計時を追加。216 MHz クロック、F7 HAL 設定・専用リンカ、
+  Arduino ピン名、サンプル、回帰テストを整備しました。
+  詳細は [v0.6.0 リリースノート](docs/releases/v0.6.0.md)、
+  [正規版公開の評価](docs/stability.md)を参照してください。

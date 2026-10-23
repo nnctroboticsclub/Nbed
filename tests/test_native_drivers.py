@@ -20,11 +20,15 @@ class NativeDriverTests(unittest.TestCase):
       for header in (f"stm32{family}xx.h", f"stm32{family}xx_hal.h",
                      f"stm32{family}xx_hal_gpio.h", f"stm32{family}xx_hal_gpio_ex.h",
                      f"stm32{family}xx_hal_rcc.h", f"stm32{family}xx_hal_uart.h",
-                     f"stm32{family}xx_hal_spi.h"):
-        (directory / header).write_text('#include "hal_stubs.h"\n', encoding="utf-8")
+                     f"stm32{family}xx_hal_spi.h", f"stm32{family}xx_hal_adc.h",
+                     f"stm32{family}xx_hal_i2c.h", f"stm32{family}xx_hal_pwr_ex.h"):
+        stub = "f7_hal_stubs.h" if suite in ("f7_clock", "f7_peripherals") else "hal_stubs.h"
+        (directory / header).write_text(f'#include "{stub}"\n', encoding="utf-8")
       executable = directory / f"{family}-test.exe"
-      drivers = (("spi", "pin_mapper") if suite == "spi" else
-                 ("gpio", "pin_mapper", "time", "timer_reservation", "uart"))
+      drivers = {"spi": ("spi", "pin_mapper"),
+                 "f7_clock": ("clock", "time"),
+                 "f7_peripherals": ("i2c", "analog_in", "pin_mapper")}.get(
+                     suite, ("gpio", "pin_mapper", "time", "timer_reservation", "uart"))
       sources = [ROOT / "src" / family / f"{name}.cc" for name in drivers]
       command = [compiler, "-std=c++23", "-Wall", "-Wextra", "-Werror", f"-D{macro}",
                  "-I", str(directory), "-I", str(ROOT / "tests/native"),
@@ -53,6 +57,18 @@ class NativeDriverTests(unittest.TestCase):
 
   def test_f4_spi(self):
     self.run_family("f4", "STM32F446xx", "spi")
+
+  def test_f7_drivers(self):
+    self.run_family("f7", "STM32F767xx")
+
+  def test_f7_spi(self):
+    self.run_family("f7", "STM32F767xx", "spi")
+
+  def test_f7_clock(self):
+    self.run_family("f7", "STM32F767xx", "f7_clock")
+
+  def test_f7_peripherals(self):
+    self.run_family("f7", "STM32F767xx", "f7_peripherals")
 
 
 if __name__ == "__main__":

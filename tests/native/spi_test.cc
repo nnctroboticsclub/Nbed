@@ -7,6 +7,9 @@
 #ifdef STM32F303x8
 #include "f3/spi.h"
 namespace device = nkrc::nbed::stm32::f3;
+#elif defined(STM32F767xx)
+#include "f7/spi.h"
+namespace device = nkrc::nbed::stm32::f7;
 #else
 #include "f4/spi.h"
 namespace device = nkrc::nbed::stm32::f4;
@@ -131,7 +134,7 @@ int main() {
     assert(!bad_sck.Initialize() && !bad_miso.Initialize() &&
            !bad_mosi.Initialize());
   }
-  for (const auto frequency : {0U, 1U, 45'000'001U}) {
+  for (const auto frequency : {0U, 1U, 54'000'001U}) {
     Spi bad(SpiPeripheral::kSpi1, PinName::kPA5, PinName::kPA6, PinName::kPA7,
             frequency);
     assert(!bad.Initialize());
@@ -147,7 +150,7 @@ int main() {
                 static_cast<SpiBitOrder>(2));
   assert(!bad_order.Initialize());
 
-#ifndef STM32F303x8
+#ifdef STM32F446xx
   for (const auto sck :
        {PinName::kPA9, PinName::kPB10, PinName::kPB13, PinName::kPC7}) {
     for (const auto miso : {PinName::kPB14, PinName::kPC2}) {
@@ -182,5 +185,40 @@ int main() {
   Spi third(SpiPeripheral::kSpi3, PinName::kPC10, PinName::kPC11,
             PinName::kPC12);
   assert(first.Initialize() && second.Initialize() && third.Initialize());
+#endif
+#ifdef STM32F767xx
+  // F7 differs from F446: PC1 SPI2 is AF5; PC7/PB0/PC1 SPI3 are not valid.
+  for (const auto sck : {PinName::kPA9, PinName::kPA12, PinName::kPB10,
+                         PinName::kPB13, PinName::kPD3}) {
+    for (const auto miso : {PinName::kPB14, PinName::kPC2}) {
+      for (const auto mosi : {PinName::kPB15, PinName::kPC1, PinName::kPC3}) {
+        Spi spi(SpiPeripheral::kSpi2, sck, miso, mosi);
+        gpio_inits.clear();
+        assert(spi.Initialize() && spi.GetFrequencyHz() == 843750);
+        assert(gpio_inits.back().second.Alternate == 5);
+      }
+    }
+  }
+  for (const auto sck : {PinName::kPB3, PinName::kPC10}) {
+    for (const auto miso : {PinName::kPB4, PinName::kPC11}) {
+      for (const auto mosi :
+           {PinName::kPB2, PinName::kPB5, PinName::kPC12, PinName::kPD6}) {
+        Spi spi(SpiPeripheral::kSpi3, sck, miso, mosi);
+        gpio_inits.clear();
+        assert(spi.Initialize() && spi.GetFrequencyHz() == 843750);
+        const uint32_t af = mosi == PinName::kPB2   ? 7
+                            : mosi == PinName::kPD6 ? 5
+                                                    : 6;
+        assert(gpio_inits.back().second.Alternate == af);
+      }
+    }
+  }
+  Spi extra(SpiPeripheral::kSpi1, PinName::kPG11, PinName::kPG9, PinName::kPD7);
+  assert(extra.Initialize());
+  Spi bad_sck(SpiPeripheral::kSpi2, PinName::kPC7, PinName::kPC2,
+              PinName::kPC3);
+  Spi bad_mosi(SpiPeripheral::kSpi3, PinName::kPC10, PinName::kPC11,
+               PinName::kPC1);
+  assert(!bad_sck.Initialize() && !bad_mosi.Initialize());
 #endif
 }

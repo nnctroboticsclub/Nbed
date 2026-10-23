@@ -130,7 +130,7 @@ Diagnostics:
 ---
 # STM32/HAL に接する低層コードに限った例外。上位コードでは検出を維持。
 If:
-  PathMatch: '(include|src)/(f3|f4)/.*\.(cc|cpp|cxx|h|hpp)$'
+  PathMatch: '(include|src)/(f3|f4|f7)/.*\.(cc|cpp|cxx|h|hpp)$'
 Diagnostics:
   ClangTidy:
     Remove:
@@ -155,14 +155,14 @@ Diagnostics:
 # IWYU の「公開時は nbed.h を使う」という指定が内部にも適用されるため、
 # 不足 include の提案だけを止める。コンパイラの未定義シンボル診断は維持する。
 If:
-  PathMatch: '(include|src)/(f3|f4)/.*\.(cc|cpp|cxx|h|hpp)$'
+  PathMatch: '(include|src)/(f3|f4|f7)/.*\.(cc|cpp|cxx|h|hpp)$'
 Diagnostics:
   MissingIncludes: None
 
 ---
 # newlib の入出力フックとリンカースクリプトが要求する名前だけを許可する。
 If:
-  PathMatch: 'src/(f3|f4)/(system|uart)\.cc'
+  PathMatch: 'src/(f3|f4|f7)/(system|uart)\.cc'
 Diagnostics:
   ClangTidy:
     CheckOptions:
@@ -195,4 +195,13 @@ CompileFlags:
   Add: [-include, stm32f3xx_hal_def.h]
 Diagnostics:
   MissingIncludes: None
+  UnusedIncludes: None
+
+---
+# F7 HAL configuration viewed without a translation unit.
+If:
+  PathMatch: 'include/stm32f7xx_hal_conf\.h'
+CompileFlags:
+  Add: [-include, stm32f7xx_hal_def.h]
+Diagnostics:
   UnusedIncludes: None

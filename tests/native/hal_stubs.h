@@ -12,18 +12,23 @@ struct GPIO_InitTypeDef {
   uint32_t Pin{}, Mode{}, Pull{}, Speed{}, Alternate{};
 };
 
-inline GPIO_TypeDef gpio_a, gpio_b, gpio_c, gpio_d, gpio_f, gpio_h;
+inline GPIO_TypeDef gpio_a, gpio_b, gpio_c, gpio_d, gpio_e, gpio_f, gpio_g,
+    gpio_h;
 #define GPIOA (&gpio_a)
 #define GPIOB (&gpio_b)
 #define GPIOC (&gpio_c)
 #define GPIOD (&gpio_d)
+#define GPIOE (&gpio_e)
 #define GPIOF (&gpio_f)
+#define GPIOG (&gpio_g)
 #define GPIOH (&gpio_h)
 #define __HAL_RCC_GPIOA_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_GPIOB_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_GPIOC_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_GPIOD_CLK_ENABLE() ((void)0)
+#define __HAL_RCC_GPIOE_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_GPIOF_CLK_ENABLE() ((void)0)
+#define __HAL_RCC_GPIOG_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_GPIOH_CLK_ENABLE() ((void)0)
 
 enum GPIO_PinState { GPIO_PIN_RESET, GPIO_PIN_SET };
@@ -39,7 +44,8 @@ enum {
   GPIO_SPEED_FREQ_HIGH,
   GPIO_SPEED_FREQ_VERY_HIGH,
   GPIO_AF7_USART2,
-  GPIO_AF8_UART4
+  GPIO_AF8_UART4,
+  GPIO_AF8_USART6
 };
 
 inline std::vector<std::pair<GPIO_TypeDef*, GPIO_InitTypeDef>> gpio_inits;
@@ -59,26 +65,42 @@ inline GPIO_PinState HAL_GPIO_ReadPin(GPIO_TypeDef* port, uint16_t pin) {
 
 struct USART_TypeDef {};
 
-inline USART_TypeDef usart1, usart2, usart3, uart4;
+inline USART_TypeDef usart1, usart2, usart3, uart4, usart6;
 #define USART1 (&usart1)
 #define USART2 (&usart2)
 #define USART3 (&usart3)
 #define UART4 (&uart4)
+#define USART6 (&usart6)
 #define __HAL_RCC_USART1_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_USART2_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_USART3_CLK_ENABLE() ((void)0)
 #define __HAL_RCC_UART4_CLK_ENABLE() ((void)0)
+#define __HAL_RCC_USART6_CLK_ENABLE() ((void)0)
+#define __HAL_RCC_USART2_CONFIG(source) ((void)0)
+#define __HAL_RCC_USART3_CONFIG(source) ((void)0)
+#define __HAL_RCC_UART4_CONFIG(source) ((void)0)
+#define __HAL_RCC_USART6_CONFIG(source) ((void)0)
 
-enum IRQn_Type { USART1_IRQn, USART2_IRQn, USART3_IRQn, UART4_IRQn };
+enum IRQn_Type {
+  USART1_IRQn,
+  USART2_IRQn,
+  USART3_IRQn,
+  UART4_IRQn,
+  USART6_IRQn
+};
 
 struct UART_InitTypeDef {
   uint32_t BaudRate{}, WordLength{}, StopBits{}, Parity{}, Mode{}, HwFlowCtl{},
-      OverSampling{};
+      OverSampling{}, OneBitSampling{};
 };
 
 struct UART_HandleTypeDef {
   USART_TypeDef* Instance{};
   UART_InitTypeDef Init{};
+
+  struct {
+    uint32_t AdvFeatureInit{};
+  } AdvancedInit;
 };
 
 enum {
@@ -87,7 +109,9 @@ enum {
   UART_PARITY_NONE,
   UART_MODE_TX_RX,
   UART_HWCONTROL_NONE,
-  UART_OVERSAMPLING_16
+  UART_OVERSAMPLING_16,
+  UART_ONE_BIT_SAMPLE_DISABLE,
+  UART_ADVFEATURE_NO_INIT
 };
 
 enum HAL_StatusTypeDef { HAL_OK, HAL_ERROR };
@@ -124,6 +148,7 @@ inline HAL_StatusTypeDef HAL_UART_Receive_IT(UART_HandleTypeDef*, uint8_t*,
 struct SPI_TypeDef {
   bool enabled{false};
 };
+
 inline SPI_TypeDef spi1, spi2, spi3;
 #define SPI1 (&spi1)
 #define SPI2 (&spi2)
@@ -134,6 +159,7 @@ inline SPI_TypeDef spi1, spi2, spi3;
 #define __HAL_SPI_ENABLE(handle) ((handle)->Instance->enabled = true)
 
 inline constexpr uint32_t GPIO_AF5_SPI1 = 5;
+inline constexpr uint32_t GPIO_AF5_SPI3 = 5;
 inline constexpr uint32_t GPIO_AF6_SPI3 = 6;
 inline constexpr uint32_t GPIO_AF7_SPI2 = 7;
 inline constexpr uint32_t GPIO_AF7_SPI3 = 7;
@@ -146,17 +172,28 @@ inline constexpr uint32_t SPI_BAUDRATEPRESCALER_32 = 32;
 inline constexpr uint32_t SPI_BAUDRATEPRESCALER_64 = 40;
 inline constexpr uint32_t SPI_BAUDRATEPRESCALER_128 = 48;
 inline constexpr uint32_t SPI_BAUDRATEPRESCALER_256 = 56;
+
 enum {
-  SPI_MODE_MASTER, SPI_DIRECTION_2LINES, SPI_DATASIZE_8BIT,
-  SPI_POLARITY_LOW, SPI_POLARITY_HIGH, SPI_PHASE_1EDGE, SPI_PHASE_2EDGE,
-  SPI_NSS_SOFT, SPI_FIRSTBIT_MSB, SPI_FIRSTBIT_LSB, SPI_TIMODE_DISABLE,
-  SPI_CRCCALCULATION_DISABLE, SPI_NSS_PULSE_DISABLE, SPI_CRC_LENGTH_DATASIZE
+  SPI_MODE_MASTER,
+  SPI_DIRECTION_2LINES,
+  SPI_DATASIZE_8BIT,
+  SPI_POLARITY_LOW,
+  SPI_POLARITY_HIGH,
+  SPI_PHASE_1EDGE,
+  SPI_PHASE_2EDGE,
+  SPI_NSS_SOFT,
+  SPI_FIRSTBIT_MSB,
+  SPI_FIRSTBIT_LSB,
+  SPI_TIMODE_DISABLE,
+  SPI_CRCCALCULATION_DISABLE,
+  SPI_NSS_PULSE_DISABLE,
+  SPI_CRC_LENGTH_DATASIZE
 };
 
 struct SPI_InitTypeDef {
   uint32_t Mode{}, Direction{}, DataSize{}, CLKPolarity{}, CLKPhase{}, NSS{},
-      BaudRatePrescaler{}, FirstBit{}, TIMode{}, CRCCalculation{}, CRCPolynomial{},
-      NSSPMode{}, CRCLength{};
+      BaudRatePrescaler{}, FirstBit{}, TIMode{}, CRCCalculation{},
+      CRCPolynomial{}, NSSPMode{}, CRCLength{};
 };
 
 struct SPI_HandleTypeDef {
@@ -167,7 +204,8 @@ struct SPI_HandleTypeDef {
 inline SPI_HandleTypeDef last_spi_init;
 inline HAL_StatusTypeDef spi_init_status = HAL_OK;
 inline HAL_StatusTypeDef spi_transfer_status = HAL_OK;
-inline unsigned spi_init_calls = 0, spi_deinit_calls = 0, spi_transfer_calls = 0;
+inline unsigned spi_init_calls = 0, spi_deinit_calls = 0,
+                spi_transfer_calls = 0;
 inline uint16_t spi_size = 0;
 inline uint32_t spi_timeout = 0;
 inline std::vector<uint8_t> spi_tx_data;
@@ -185,7 +223,7 @@ inline HAL_StatusTypeDef HAL_SPI_DeInit(SPI_HandleTypeDef* handle) {
 }
 
 inline HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef*, uint8_t* data,
-                                         uint16_t size, uint32_t timeout) {
+                                          uint16_t size, uint32_t timeout) {
   ++spi_transfer_calls;
   spi_size = size;
   spi_timeout = timeout;
@@ -193,9 +231,10 @@ inline HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef*, uint8_t* data,
   return spi_transfer_status;
 }
 
-inline HAL_StatusTypeDef HAL_SPI_TransmitReceive(
-    SPI_HandleTypeDef* handle, uint8_t* tx, uint8_t* rx, uint16_t size,
-    uint32_t timeout) {
+inline HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef* handle,
+                                                 uint8_t* tx, uint8_t* rx,
+                                                 uint16_t size,
+                                                 uint32_t timeout) {
   const auto status = HAL_SPI_Transmit(handle, tx, size, timeout);
   if (status == HAL_OK) {
     for (uint16_t index = 0; index < size; ++index) {
@@ -205,21 +244,17 @@ inline HAL_StatusTypeDef HAL_SPI_TransmitReceive(
   return status;
 }
 
-inline uint32_t HAL_RCC_GetPCLK1Freq() {
 #ifdef STM32F303x8
-  return 32'000'000;
+inline uint32_t pclk1_hz = 32'000'000, pclk2_hz = 64'000'000;
+#elif defined(STM32F767xx)
+inline uint32_t pclk1_hz = 54'000'000, pclk2_hz = 108'000'000;
 #else
-  return 45'000'000;
+inline uint32_t pclk1_hz = 45'000'000, pclk2_hz = 90'000'000;
 #endif
-}
 
-inline uint32_t HAL_RCC_GetPCLK2Freq() {
-#ifdef STM32F303x8
-  return 64'000'000;
-#else
-  return 90'000'000;
-#endif
-}
+inline uint32_t HAL_RCC_GetPCLK1Freq() { return pclk1_hz; }
+
+inline uint32_t HAL_RCC_GetPCLK2Freq() { return pclk2_hz; }
 
 inline void HAL_UART_IRQHandler(UART_HandleTypeDef*) {}
 
@@ -234,7 +269,7 @@ struct CoreDebug_Type {
 };
 
 struct DWT_Type {
-  uint32_t CTRL{}, CYCCNT{};
+  uint32_t CTRL{}, CYCCNT{}, LAR{};
 };
 
 inline CoreDebug_Type core_debug;

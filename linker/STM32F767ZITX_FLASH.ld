@@ -44,7 +44,10 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Memories definition */
 MEMORY
 {
-  RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 512K
+  /* Default data/heap/stack use contiguous SRAM1 + SRAM2, not DTCM. */
+  RAM    (xrw)    : ORIGIN = 0x20020000,   LENGTH = 384K
+  DTCM   (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
+  ITCM   (xrw)    : ORIGIN = 0x00000000,   LENGTH = 16K
   FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 2048K
 }
 

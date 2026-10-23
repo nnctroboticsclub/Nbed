@@ -121,3 +121,47 @@ inline void SleepFor(uint32_t ms) {
 }
 #endif  // NBED_NO_GLOBAL_FUNCTIONS
 #endif  // STM32F303x8
+
+// STM32F7シリーズ用の実装
+#ifdef STM32F767xx
+#include "f7/analog_in.h"  // IWYU pragma: export
+#include "f7/can.h"        // IWYU pragma: export
+#include "f7/clock.h"      // IWYU pragma: export
+#include "f7/encoder.h"    // IWYU pragma: export
+#include "f7/gpio.h"       // IWYU pragma: export
+#include "f7/i2c.h"        // IWYU pragma: export
+#include "f7/pwm.h"        // IWYU pragma: export
+#include "f7/spi.h"        // IWYU pragma: export
+#include "f7/system.h"     // IWYU pragma: export
+#include "f7/time.h"       // IWYU pragma: export
+#include "f7/uart.h"       // IWYU pragma: export
+
+// 初心者向けグローバル名前空間
+#ifndef NBED_NO_GLOBAL_NAMES
+using namespace nkrc::nbed::stm32::f7;
+using enum nkrc::nbed::stm32::f7::CanPeripheral;
+using enum nkrc::nbed::stm32::f7::CanMode;
+// using enum nkrc::nbed::stm32::f7::EncoderTimer;
+using enum nkrc::nbed::stm32::f7::GpioPull;
+using enum nkrc::nbed::stm32::f7::I2cPeripheral;
+using enum nkrc::nbed::stm32::f7::PwmTimer;
+using enum nkrc::nbed::stm32::f7::PwmChannel;
+using enum nkrc::nbed::stm32::f7::SpiPeripheral;
+using enum nkrc::nbed::stm32::f7::UartPeripheral;
+#endif  // NBED_NO_GLOBAL_NAMES
+
+#ifndef NBED_NO_GLOBAL_FUNCTIONS
+inline void SleepFor(std::chrono::seconds sec) {
+  nkrc::nbed::stm32::f7::ClockManager::GetClock().Sleep(
+      std::chrono::duration_cast<std::chrono::milliseconds>(sec));
+}
+
+inline void SleepFor(std::chrono::milliseconds ms) {
+  nkrc::nbed::stm32::f7::ClockManager::GetClock().Sleep(ms);
+}
+
+inline void SleepFor(uint32_t ms) {
+  nkrc::nbed::stm32::f7::ClockManager::GetClock().Sleep(ms);
+}
+#endif  // NBED_NO_GLOBAL_FUNCTIONS
+#endif  // STM32F767xx

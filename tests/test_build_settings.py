@@ -51,7 +51,8 @@ class BuildSettingsTests(unittest.TestCase):
   def test_supported_mcus(self):
     for mcu, family, linker, optimization in (
         ("stm32f446ret6", "f4", "STM32F446RETX_FLASH.ld", "-O3"),
-        ("stm32f303k8t6", "f3", "STM32F303K8TX_FLASH.ld", "-Os")):
+        ("stm32f303k8t6", "f3", "STM32F303K8TX_FLASH.ld", "-Os"),
+        ("stm32f767zit6", "f7", "STM32F767ZITX_FLASH.ld", "-O3")):
       with self.subTest(mcu=mcu):
         environments, result = configure(mcu)
         self.assertEqual(environments[0]["SRC_FILTER"], ["-<*>", f"+<{family}/>"])
@@ -68,7 +69,7 @@ class BuildSettingsTests(unittest.TestCase):
 
   def test_unsupported_mcu_is_rejected(self):
     with self.assertRaisesRegex(ValueError, "does not support MCU"):
-      configure("stm32f767zit6")
+      configure("stm32f746zgt6")
 
 
 if __name__ == "__main__":
