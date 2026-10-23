@@ -11,6 +11,8 @@ struct TimeState {
   uint32_t cycles_per_ms{1};
   volatile uint32_t dwt_cycles_at_last_tick{0};
   bool dwt_enabled{false};
+  volatile uint32_t last_tick{0};
+  volatile uint32_t tick_wraps{0};
 };
 
 TimeState& State() {
@@ -21,6 +23,8 @@ TimeState& State() {
 
 bool Time::Initialize() {
   TimeState& state = State();
+  state.last_tick = HAL_GetTick();
+  state.tick_wraps = 0;
   CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
   DWT->CYCCNT = 0;
   DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
@@ -35,6 +39,11 @@ bool Time::Initialize() {
 
 void Time::OnSysTick() {
   TimeState& state = State();
+  const uint32_t tick = HAL_GetTick();
+  if (tick < state.last_tick) {
+    state.tick_wraps = state.tick_wraps + 1U;
+  }
+  state.last_tick = tick;
   if (state.dwt_enabled) {
     state.dwt_cycles_at_last_tick = DWT->CYCCNT;
   }
@@ -44,29 +53,31 @@ uint32_t Time::Milliseconds() { return HAL_GetTick(); }
 
 uint64_t Time::Microseconds() {
   const TimeState& state = State();
-  const uint64_t milliseconds = Milliseconds();
-  if (!state.dwt_enabled) {
-    return milliseconds * 1'000U;
-  }
-
-  // Align the DWT counter to the SysTick that maintains HAL_GetTick(). Taking
-  // the old implementation's modulo against the free-running DWT counter can
-  // otherwise make the reported time move backwards at a millisecond boundary.
   uint32_t first_tick = 0;
   uint32_t second_tick = 0;
+  uint32_t wraps = 0;
   uint32_t dwt_cycles_at_tick = 0;
-  // Sample the SysTick at least once and retry if an interrupt intervenes.
+  uint32_t cycles_now = 0;
+  // Sample CYCCNT before the final tick check: a SysTick between the check
+  // and CYCCNT would otherwise pair a new cycle baseline with the old tick.
   // NOLINTNEXTLINE(cppcoreguidelines-avoid-do-while)
   do {
     first_tick = Milliseconds();
+    wraps = state.tick_wraps;
     dwt_cycles_at_tick = state.dwt_cycles_at_last_tick;
+    cycles_now = DWT->CYCCNT;
     second_tick = Milliseconds();
   } while (first_tick != second_tick);
 
-  const uint32_t elapsed_cycles = DWT->CYCCNT - dwt_cycles_at_tick;
+  const uint64_t milliseconds =
+      (static_cast<uint64_t>(wraps) << 32) | second_tick;
+  if (!state.dwt_enabled) {
+    return milliseconds * 1'000U;
+  }
+  const uint32_t elapsed_cycles = cycles_now - dwt_cycles_at_tick;
   const uint64_t sub_milliseconds =
       (static_cast<uint64_t>(elapsed_cycles) * 1'000U) / state.cycles_per_ms;
-  return (static_cast<uint64_t>(second_tick) * 1'000U) +
+  return milliseconds * 1'000U +
          (sub_milliseconds < 1'000U ? sub_milliseconds : 999U);
 }
 

@@ -136,8 +136,8 @@ bool I2c::IsValidPinPair() const {
     return scl_ == PinName::kPB10 &&
            (sda_ == PinName::kPB3 || sda_ == PinName::kPC12);
   }
-  return (scl_ == PinName::kPA8 && sda_ == PinName::kPB4) ||
-         (scl_ == PinName::kPA8 && sda_ == PinName::kPC9);
+  return peripheral_ == I2cPeripheral::kI2c3 && scl_ == PinName::kPA8 &&
+         (sda_ == PinName::kPB4 || sda_ == PinName::kPC9);
 }
 
 }  // namespace nkrc::nbed::stm32::f4

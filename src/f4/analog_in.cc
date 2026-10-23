@@ -79,8 +79,14 @@ float AnalogIn::ReadRatio() {
   channel.Channel = Channel();
   channel.Rank = 1;
   channel.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-  if (HAL_ADC_ConfigChannel(&adc1, &channel) != HAL_OK ||
-      HAL_ADC_Start(&adc1) != HAL_OK) {
+  static uint32_t last_channel = 0xffffffffU;
+  if (last_channel != channel.Channel) {
+    if (HAL_ADC_ConfigChannel(&adc1, &channel) != HAL_OK) {
+      return 0.0F;
+    }
+    last_channel = channel.Channel;
+  }
+  if (HAL_ADC_Start(&adc1) != HAL_OK) {
     return 0.0F;
   }
   if (HAL_ADC_PollForConversion(&adc1, 100) != HAL_OK) {

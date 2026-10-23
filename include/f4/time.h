@@ -20,7 +20,7 @@ class Time {
 };
 
 // Mbed-style elapsed timer. Time::Initialize must be called after clocks are
-// configured, normally immediately after System::InitializeAll().
+// configured, normally immediately after System::Initialize().
 class Timer final : public interface::Timer {
  public:
   void Start() override;

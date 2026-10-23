@@ -49,9 +49,10 @@ pio device monitor -e f4-blink
 
 | 項目 | バージョン・設定 |
 | --- | --- |
-| ボード | NUCLEO-F446RE |
+| ボード | NUCLEO-F446RE / NUCLEO-F303K8 |
 | Platform | ststm32 20.0.0 |
 | STM32CubeF4 | 1.28.3 |
+| STM32CubeF3 | 1.11.5 |
 | GCC パッケージ | 1.140201.0 |
 | logger | v0.3.0 |
 
@@ -67,6 +68,10 @@ pio device monitor -e f4-blink
 | `04-f4-uart-test` | USART2 の受信データを返信 |
 | `05-f4-can-test` | CAN1 から CAN2 への送受信 |
 | `06-f4-nbed-example` | 機能別の使用例。初期状態では `CanExample()` を実行 |
+| `f3-blink` | NUCLEO-F303K8 の PB3 LED 点滅 |
+| `f3-all-test` | F303K8 の全機能・CAN 内部ループバック |
+
+F303K8 の配線・クロック・ピン表は [F303K8 ガイド](f303k8.md)を参照してください。
 
 ```sh
 pio run -e 04-f4-uart-test
@@ -78,10 +83,10 @@ UART・CAN・アナログ入力などの例には、それぞれに合う配線�
 サンプルのピン指定と [ライブラリガイド](../README.md)を確認してから書き込んでください。
 `00-f4-all-test` と `04-f4-uart-test` の `NBED_NO_DEFAULT_SERIAL` は移行元から引き継いでいます。
 
-全8環境をビルドするには、既定環境を上書きして実行します。
+全10環境をビルドするには、既定環境を上書きして実行します。
 
 ```sh
-pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test -e 03-f4-pwm-test -e 04-f4-uart-test -e 05-f4-can-test -e 06-f4-nbed-example
+pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test -e 03-f4-pwm-test -e 04-f4-uart-test -e 05-f4-can-test -e 06-f4-nbed-example -e f3-blink -e f3-all-test
 ```
 
 これらは実機確認用プログラムです。ビルドの成功だけでは実機の動作確認は完了しません。
@@ -89,6 +94,21 @@ pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test
 新しい例は `examples/<環境名>/main.cc` に作成し、`platformio.ini` に
 `[env:<環境名>]` と `build_src_filter = -<*> +<${this.__env__}/>` を追加します。
 このソースフィルタが同名のフォルダを選択します。
+
+## ホスト上の回帰テスト
+
+```sh
+python -m unittest discover -s tests -v
+```
+
+コンパイルDBのテスト、MCU別ビルド設定、F3/F4のドライバロジックを確認します。
+ドライバテストにはホスト用 C++23 コンパイラが必要です。既定は `g++`、別のコンパイラは
+環境変数 `CXX` で指定できます。コンパイラがない場合は、そのテストだけスキップされます。
+Windows のアプリ制御が生成した実行ファイルを拒否する場合も、理由を表示して実行だけ
+スキップします。数値計算の `static_assert` はコンパイル時に検証されます。
+HAL を小さな代替実装に置き換え、全ピン値の判定、GPIO、タイマの競合、PWM/I²C の
+計算、計時の割り込みと周回、UART のまとめ送り・分割・エラーを実行します。
+実機での波形・通信確認は別途必要です。
 
 ## VS Code と clangd
 
@@ -103,6 +123,8 @@ pio run -e f4-blink -e 00-f4-all-test -e 01-f4-digital-test -e 02-f4-analog-test
 `build/compiledb/compile_commands.json` にまとめます。同じ内容をプロジェクト直下の
 `compile_commands.json` にも出力し、clangd は直下の DB を参照します。
 同じライブラリソースについては、最後にビルドした環境の設定を優先します。
+MCU 別のソースフィルタにより `src/f3/` と `src/f4/` は対応する環境だけでコンパイルされ、
+それぞれの CPU マクロ・HAL パスが DB に残ります。
 初回は一度ビルドしてから補完・診断を利用してください。
 
 `files.watcherExclude` では大量の生成物がある `build/**` を監視対象から外しています。

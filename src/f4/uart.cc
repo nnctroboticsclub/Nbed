@@ -2,6 +2,8 @@
 
 #include "f4/uart.h"
 
+#include <algorithm>
+#include <cerrno>
 #include <limits>
 
 #include "f4/pin_mapper.h"
@@ -72,7 +74,7 @@ bool Uart::Initialize() {
     return true;
   }
   Uart*& instance = InstanceFor(peripheral_);
-  if (!IsValidPinPair() || baud_rate_ == 0 ||
+  if (!IsValidPinPair() || baud_rate_ == 0 || interrupt_priority_ > 15U ||
       (instance != nullptr && instance != this)) {
     return false;
   }
@@ -143,7 +145,11 @@ void Uart::SetRxCallback(const interface::UartRxCallback& callback) {
 
 UART_HandleTypeDef& Uart::GetHandle() { return handle_; }
 
-void Uart::SetConsole() { Console() = this; }
+void Uart::SetConsole() {
+  if (initialized_) {
+    Console() = this;
+  }
+}
 
 void Uart::HandleInterrupt(UartPeripheral peripheral) {
   Uart* const uart = InstanceFor(peripheral);
@@ -188,7 +194,8 @@ bool Uart::IsValidPinPair() const {
     return (rx_ == PinName::kPC5 || rx_ == PinName::kPC11) &&
            (tx_ == PinName::kPB10 || tx_ == PinName::kPC10);
   }
-  return (rx_ == PinName::kPA1 || rx_ == PinName::kPC11) &&
+  return peripheral_ == UartPeripheral::kUart4 &&
+         (rx_ == PinName::kPA1 || rx_ == PinName::kPC11) &&
          (tx_ == PinName::kPA0 || tx_ == PinName::kPC10);
 }
 
@@ -213,6 +220,31 @@ Uart*& Uart::InstanceFor(UartPeripheral peripheral) {
 }
 
 extern "C" {
+// newlib supplies a complete output buffer. Send it in HAL-sized chunks so
+// printf does not acquire/release the UART for every character.
+int _write(int file, const char* ptr, int len) {
+  (void)file;
+  if (len < 0 || (len > 0 && ptr == nullptr)) {
+    errno = EINVAL;
+    return -1;
+  }
+  if (Console() == nullptr) {
+    return len;
+  }
+  int written = 0;
+  while (written < len) {
+    const auto size = static_cast<uint16_t>(
+        std::min<int>(len - written, std::numeric_limits<uint16_t>::max()));
+    if (!Console()->Send(interface::UartTxMessage{
+            reinterpret_cast<const uint8_t*>(ptr + written), size})) {
+      errno = EIO;
+      return written == 0 ? -1 : written;
+    }
+    written += size;
+  }
+  return written;
+}
+
 void USART2_IRQHandler() { Uart::HandleInterrupt(UartPeripheral::kUsart2); }
 
 void USART3_IRQHandler() { Uart::HandleInterrupt(UartPeripheral::kUsart3); }

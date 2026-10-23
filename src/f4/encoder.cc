@@ -112,6 +112,9 @@ int Encoder::GetCount() {
 }
 
 Angle Encoder::GetAngle() {
+  if (!initialized_) {
+    return Angle::FromDegree(0.0F);
+  }
   return Angle::FromDegree(static_cast<float>(GetCount()) * 360.0F /
                            static_cast<float>(counts_per_revolution_));
 }

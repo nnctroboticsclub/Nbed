@@ -1,4 +1,4 @@
-"""Apply the NUCLEO-F446RE build settings carried by the Nbed library."""
+"""Apply MCU-specific build settings carried by the Nbed library."""
 
 from os.path import join, realpath
 
@@ -8,10 +8,21 @@ Import("env", "projenv", "pio_lib_builder")  # pyright: ignore[reportUndefinedVa
 
 LIBRARY_DIR = realpath(pio_lib_builder.path)  # pyright: ignore[reportUndefinedVariable]
 INCLUDE_DIR = join(LIBRARY_DIR, "include")
-LDSCRIPT_PATH = join(LIBRARY_DIR, "linker", "STM32F446RETX_FLASH.ld")
+MCU = env.BoardConfig().get("build.mcu", "").lower()  # pyright: ignore[reportUndefinedVariable]
+LINKER_SCRIPTS = {
+  "stm32f446ret6": "STM32F446RETX_FLASH.ld",
+  "stm32f303k8t6": "STM32F303K8TX_FLASH.ld",
+}
+if MCU not in LINKER_SCRIPTS:
+  raise ValueError("Nbed does not support MCU: " + MCU)
+LDSCRIPT_PATH = join(LIBRARY_DIR, "linker", LINKER_SCRIPTS[MCU])
+FAMILY = "f3" if MCU == "stm32f303k8t6" else "f4"
+# Select only this MCU's implementation. This also keeps clangd's compile
+# database from replacing F3 entries with empty F4 compilations, or vice versa.
+env.Replace(SRC_FILTER=["-<*>", "+<" + FAMILY + "/>"])  # pyright: ignore[reportUndefinedVariable]
 
 BUILD_FLAGS = [
-  "-O3",
+  "-Os" if MCU == "stm32f303k8t6" else "-O3",
   "-flto",
   "-ffunction-sections",
   "-fdata-sections",

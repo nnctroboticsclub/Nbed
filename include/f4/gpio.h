@@ -6,6 +6,7 @@
 #include "interface/digital_in.h"
 #include "interface/digital_out.h"
 #include "interface/pin_names.h"
+#include "stm32f4xx_hal.h"
 
 namespace nkrc::nbed::stm32::f4 {
 
@@ -32,6 +33,8 @@ class DigitalOut final : public interface::DigitalOut {
   interface::PinName pin_;
   bool initial_value_;
   bool initialized_{false};
+  GPIO_TypeDef* port_{nullptr};
+  uint16_t pin_mask_{0};
 };
 
 class DigitalIn final : public interface::DigitalIn {
@@ -46,6 +49,8 @@ class DigitalIn final : public interface::DigitalIn {
   interface::PinName pin_;
   GpioPull pull_;
   bool initialized_{false};
+  GPIO_TypeDef* port_{nullptr};
+  uint16_t pin_mask_{0};
 };
 
 }  // namespace nkrc::nbed::stm32::f4

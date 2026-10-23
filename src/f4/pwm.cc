@@ -4,8 +4,8 @@
 
 #include <algorithm>
 #include <cmath>
-#include <optional>
 
+#include "detail/pwm_timing.h"
 #include "f4/pin_mapper.h"
 #include "f4/timer_reservation.h"
 #include "stm32f4xx_hal_gpio.h"
@@ -24,12 +24,6 @@ struct Pwm::TimerState {
 };
 
 namespace {
-
-struct Timing {
-  uint32_t prescaler;  // PSCレジスタ値（分周比 - 1）
-  uint32_t period;     // ARRレジスタ値
-  uint32_t actual_hz;
-};
 
 Pwm::TimerState& StateOf(PwmTimer timer) {
   static Pwm::TimerState tim1{};
@@ -89,33 +83,6 @@ void EnableTimerClock(PwmTimer timer) {
   }
 }
 
-// 目標周波数からPSC/ARRを計算する。
-std::optional<Timing> ComputeTiming(uint32_t clock_hz, uint32_t frequency_hz,
-                                    uint32_t max_period) {
-  if (frequency_hz == 0) {
-    return std::nullopt;
-  }
-  const uint64_t ticks_per_period = clock_hz / frequency_hz;
-  if (ticks_per_period == 0) {
-    return std::nullopt;
-  }
-  const uint64_t counter_range = static_cast<uint64_t>(max_period) + 1ULL;
-  const uint64_t divider =
-      (ticks_per_period + counter_range - 1ULL) / counter_range;  // ceil
-  if (divider == 0 || divider > 0x10000ULL) {
-    return std::nullopt;
-  }
-  const uint64_t counter_ticks = ticks_per_period / divider;
-  if (counter_ticks == 0 || counter_ticks > counter_range) {
-    return std::nullopt;
-  }
-  return Timing{
-      .prescaler = static_cast<uint32_t>(divider - 1ULL),
-      .period = static_cast<uint32_t>(counter_ticks - 1ULL),
-      .actual_hz = static_cast<uint32_t>(clock_hz / (divider * counter_ticks)),
-  };
-}
-
 void SetCompareTicks(Pwm::TimerState& state, PwmTimer timer, uint32_t channel,
                      uint64_t ticks) {
   const uint64_t upper = std::min<uint64_t>(
@@ -167,9 +134,9 @@ bool Pwm::Initialize() {
     return false;
   }
   const bool first_channel = !state.initialized;
-  const auto timing =
-      ComputeTiming(first_channel ? TimerClockHz() : state.timer_clock_hz,
-                    frequency_hz_, MaxPeriod(timer_));
+  const auto timing = detail::ComputePwmTiming(
+      first_channel ? TimerClockHz() : state.timer_clock_hz, frequency_hz_,
+      MaxPeriod(timer_));
   if (!timing) {
     TimerReservation::ReleasePwm(static_cast<uint8_t>(timer_),
                                  static_cast<uint8_t>(channel_));
@@ -256,8 +223,8 @@ bool Pwm::SetFrequencyHz(uint32_t frequency_hz) {
   if (state.active_channels > 1) {
     return false;  // 他のチャンネルと周期を共有しているので変更不可
   }
-  const auto timing =
-      ComputeTiming(state.timer_clock_hz, frequency_hz, MaxPeriod(timer_));
+  const auto timing = detail::ComputePwmTiming(state.timer_clock_hz,
+                                               frequency_hz, MaxPeriod(timer_));
   if (!timing) {
     return false;
   }
@@ -289,10 +256,8 @@ bool Pwm::SetDutyCycle(float duty_cycle) {
   }
   duty_cycle = std::clamp(duty_cycle, 0.0F, 1.0F);
   auto& state = State();
-  const double range = static_cast<double>(state.handle.Init.Period) + 1.0;
-  // floatのままだとTIM2(32bit)で精度が足りず、1.0でuint32_tに収まらずUBになる。
-  const auto ticks = static_cast<uint64_t>(
-      std::lround(static_cast<double>(duty_cycle) * range));
+  const uint64_t ticks =
+      detail::PwmDutyTicks(duty_cycle, state.handle.Init.Period);
   SetCompareTicks(state, timer_, HalChannel(), ticks);
   return true;
 }
@@ -337,7 +302,8 @@ uint32_t Pwm::HalChannel() const {
 // Keep the complete timer/channel/pin matrix together for review.
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
 bool Pwm::IsValidPin() const {
-  if (!PinMapper::IsValidPin(pin_)) {
+  if (!PinMapper::IsValidPin(pin_) || timer_ > PwmTimer::kTim3 ||
+      channel_ > PwmChannel::kCh4) {
     return false;
   }
   using interface::PinName;

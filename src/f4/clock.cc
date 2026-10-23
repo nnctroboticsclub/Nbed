@@ -69,7 +69,11 @@ bool IsValidConfiguration(const Clock::Configuration& configuration) {
   constexpr uint64_t kMaximumApb1ClockHz = 45'000'000ULL;
   constexpr uint64_t kMaximumApb2ClockHz = 90'000'000ULL;
 
-  if (!IS_RCC_PLLM_VALUE(configuration.pll_m) || configuration.pll_n < 50U ||
+  if ((configuration.oscillator_source != Clock::OscillatorSource::kHsi &&
+       configuration.oscillator_source != Clock::OscillatorSource::kHse) ||
+      (configuration.oscillator_source == Clock::OscillatorSource::kHse &&
+       configuration.hse_frequency_hz != HSE_VALUE) ||
+      !IS_RCC_PLLM_VALUE(configuration.pll_m) || configuration.pll_n < 50U ||
       configuration.pll_n > 432U || !IS_RCC_PLLP_VALUE(configuration.pll_p) ||
       !IS_RCC_PLLQ_VALUE(configuration.pll_q)) {
     return false;
@@ -190,7 +194,9 @@ bool Clock::Initialize(const Configuration& configuration) {
   return HAL_RCC_ClockConfig(&clk, flash_latency) == HAL_OK;
 }
 
-void Clock::Sleep(uint32_t milliseconds) { HAL_Delay(milliseconds); }
+void Clock::Sleep(uint32_t milliseconds) {
+  Sleep(std::chrono::milliseconds{milliseconds});
+}
 
 void Clock::Sleep(std::chrono::milliseconds milliseconds) {
   if (milliseconds <= std::chrono::milliseconds::zero()) {

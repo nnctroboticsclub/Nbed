@@ -28,24 +28,7 @@ void Error::ErrorHandler() {
   while (true) {}
 }
 
-void System::Initialize() {
-  HAL_Init();
-  if (!ClockManager::Initialize()) {
-    ErrorHandler();
-  }
-  Time::Initialize();
-  DmaManager::Initialize();
-
-#ifndef NBED_NO_DEFAULT_SERIAL
-  static Uart uart(UartPeripheral::kUsart2, interface::PinName::kPA3,
-                   interface::PinName::kPA2, 921600);
-  if (uart.Initialize()) {
-    uart.SetConsole();
-    Logger::Info("System",
-                 "Default serial console initialized on USART2 (PA3/PA2)");
-  }
-#endif  // NBED_NO_DEFAULT_SERIAL
-}
+void System::Initialize() { Initialize(Clock::Configuration{}); }
 
 void System::Initialize(const Clock::Configuration& configuration) {
   HAL_Init();
@@ -136,7 +119,7 @@ void _exit(int status) {
   }
 }
 
-int _write(int file, const char* ptr, int len) {
+__attribute__((weak)) int _write(int file, const char* ptr, int len) {
   (void)file;
   for (int i = 0; i < len; i++) {
     if (__io_putchar(*ptr++) < 0) {

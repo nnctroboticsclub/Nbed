@@ -40,21 +40,20 @@ bool DigitalOut::Initialize() {
   if (!PinMapper::ConfigureGpio(pin_, config)) {
     return false;
   }
+  port_ = port;
+  pin_mask_ = pin;
   initialized_ = true;
   return true;
 }
 
 void DigitalOut::Write(bool value) {
   if (initialized_) {
-    HAL_GPIO_WritePin(PinMapper::GetGpioPort(pin_), PinMapper::GetGpioPin(pin_),
-                      value ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(port_, pin_mask_, value ? GPIO_PIN_SET : GPIO_PIN_RESET);
   }
 }
 
 bool DigitalOut::Read() const {
-  return initialized_ &&
-         HAL_GPIO_ReadPin(PinMapper::GetGpioPort(pin_),
-                          PinMapper::GetGpioPin(pin_)) == GPIO_PIN_SET;
+  return initialized_ && HAL_GPIO_ReadPin(port_, pin_mask_) == GPIO_PIN_SET;
 }
 
 DigitalIn::DigitalIn(interface::PinName pin, GpioPull pull)
@@ -73,14 +72,14 @@ bool DigitalIn::Initialize() {
   if (!PinMapper::ConfigureGpio(pin_, config)) {
     return false;
   }
+  port_ = PinMapper::GetGpioPort(pin_);
+  pin_mask_ = PinMapper::GetGpioPin(pin_);
   initialized_ = true;
   return true;
 }
 
 bool DigitalIn::Read() const {
-  return initialized_ &&
-         HAL_GPIO_ReadPin(PinMapper::GetGpioPort(pin_),
-                          PinMapper::GetGpioPin(pin_)) == GPIO_PIN_SET;
+  return initialized_ && HAL_GPIO_ReadPin(port_, pin_mask_) == GPIO_PIN_SET;
 }
 
 }  // namespace nkrc::nbed::stm32::f4

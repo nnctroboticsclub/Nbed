@@ -71,7 +71,8 @@ bool Can::Initialize() {
   if (initialized_) {
     return true;
   }
-  if (!IsValidPinPair() || !OwnPeripheral()) {
+  if (!IsValidPinPair() || config_.interrupt_priority > 15U ||
+      !OwnPeripheral()) {
     return false;
   }
 
@@ -335,13 +336,14 @@ bool Can::IsValidPinPair() const {
   if (!PinMapper::IsValidPinPair(config_.rx, config_.tx)) {
     return false;
   }
-  return config_.peripheral == CanPeripheral::kCan1
-             ? IsCan1Pins(config_.rx, config_.tx)
-             : IsCan2Pins(config_.rx, config_.tx);
+  return (config_.peripheral == CanPeripheral::kCan1 &&
+          IsCan1Pins(config_.rx, config_.tx)) ||
+         (config_.peripheral == CanPeripheral::kCan2 &&
+          IsCan2Pins(config_.rx, config_.tx));
 }
 
 bool Can::ConfigureBitTiming() {
-  if (config_.bitrate == 0) {
+  if (config_.bitrate == 0 || config_.bitrate > 1'000'000U) {
     return false;
   }
   const uint32_t can_clock = HAL_RCC_GetPCLK1Freq();
